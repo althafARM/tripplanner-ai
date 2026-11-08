@@ -1,45 +1,61 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom";
-import AdminLogin from "./pages/AdminLogin";
-import AdminProtectedRoute from "./components/AdminProtectedRoute";
+import {
+  BrowserRouter,
+  Route,
+  Routes,
+  Navigate,
+  Outlet,
+} from "react-router-dom";
+import UserProfile from "./pages/UserProfile";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
+import UserProtectedRoute from "./components/UserProtectedRoute";
 
 import Home from "./pages/Home";
 import Explore from "./pages/Explore";
 import TripPlanner from "./pages/TripPlanner";
 import MyTrips from "./pages/MyTrips";
 import ChatAssistant from "./pages/ChatAssistant";
-import MonitoringDashboard from "./components/MonitoringDashboard";
+
+import UserLogin from "./pages/UserLogin";
+import UserRegister from "./pages/UserRegister";
+
+// Navbar appears only on protected client pages
+function ClientLayout() {
+  return (
+    <>
+      <Navbar />
+      <main>
+        <Outlet />
+      </main>
+      <Footer />
+    </>
+  );
+}
 
 export default function App() {
   return (
     <BrowserRouter>
-      <Navbar />
+      <Routes>
+        {/* Public pages */}
+        <Route path="/" element={<Navigate to="/login" replace />} />
+        <Route path="/login" element={<UserLogin />} />
+        <Route path="/register" element={<UserRegister />} />
 
-      <main>
-        <Routes>
-          <Route path="/" element={<Home />} />
-
-          <Route path="/explore" element={<Explore />} />
-
-          <Route path="/planner" element={<TripPlanner />} />
-
-          <Route path="/my-trips" element={<MyTrips />} />
-
-          <Route path="/chat" element={<ChatAssistant />} />
-
-          <Route path="/admin/login" element={<AdminLogin />} />
-
-          {/* System Monitoring Dashboard */}
-          <Route element={<AdminProtectedRoute />}>
-            <Route path="/monitoring" element={<MonitoringDashboard />} />
+        {/* Protected client pages */}
+        <Route element={<UserProtectedRoute />}>
+          <Route element={<ClientLayout />}>
+            <Route path="/home" element={<Home />} />
+            <Route path="/explore" element={<Explore />} />
+            <Route path="/planner" element={<TripPlanner />} />
+            <Route path="/my-trips" element={<MyTrips />} />
+            <Route path="/chat" element={<ChatAssistant />} />
+            <Route path="/profile" element={<UserProfile />} />
           </Route>
+        </Route>
 
-          <Route path="*" element={<Home />} />
-        </Routes>
-      </main>
-
-      <Footer />
+        {/* Unknown routes */}
+        <Route path="*" element={<Navigate to="/login" replace />} />
+      </Routes>
     </BrowserRouter>
   );
 }

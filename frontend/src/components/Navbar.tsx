@@ -1,60 +1,111 @@
 import { useState } from "react";
 import { Link, NavLink } from "react-router-dom";
-import { Compass, Menu, X } from "lucide-react";
+import {
+  Compass,
+  Menu,
+  X,
+  UserRound,
+  LogOut,
+  ArrowUpRight,
+} from "lucide-react";
+
+import { logoutUser } from "../services/authService";
 
 const links = [
-  { to: "/", label: "Home" },
+  { to: "/home", label: "Home" },
   { to: "/explore", label: "Explore" },
-  { to: "/planner", label: "AI Planner" },
   { to: "/my-trips", label: "My Trips" },
   { to: "/chat", label: "AI Assistant" },
-  { to: "/monitoring", label: "Monitoring" }
 ];
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
 
-  return (
-    <header className="navbar">
-      <div className="nav-inner container">
+  const closeMenu = () => setOpen(false);
 
-        <Link to="/" className="brand" onClick={() => setOpen(false)}>
-          <span className="brand-icon">
-            <Compass size={22} />
+  return (
+    <header className="lux-navbar">
+
+      <div className="lux-nav-container">
+
+        {/* BRAND */}
+        <Link
+          to="/home"
+          className="lux-brand"
+          onClick={closeMenu}
+        >
+          <span className="lux-brand-icon">
+            <Compass size={25} />
           </span>
-          <span>TripPlanner <b>AI</b></span>
+
+          <span className="lux-brand-text">
+            TripPlanner
+            <span> AI</span>
+            <small>TRAVEL INTELLIGENTLY</small>
+          </span>
         </Link>
 
+        {/* MOBILE MENU */}
         <button
-          className="mobile-menu"
-          aria-label="Toggle navigation"
+          className="lux-mobile-toggle"
           onClick={() => setOpen(!open)}
+          aria-label="Toggle navigation"
+          aria-expanded={open}
         >
-          {open ? <X /> : <Menu />}
+          {open ? <X size={25} /> : <Menu size={25} />}
         </button>
 
-        <nav className={open ? "nav-links open" : "nav-links"}>
+        {/* NAVIGATION */}
+        <nav className={open ? "lux-nav-links open" : "lux-nav-links"}>
 
-          {links.map(link => (
+          {links.map((link) => (
             <NavLink
               key={link.to}
               to={link.to}
-              end={link.to === "/"}
-              onClick={() => setOpen(false)}
+              end={link.to === "/home"}
+              onClick={closeMenu}
+              className={({ isActive }) =>
+                isActive ? "lux-nav-link active" : "lux-nav-link"
+              }
             >
               {link.label}
             </NavLink>
           ))}
 
+          {/* PROFILE */}
           <Link
-            to="/planner"
-            className="nav-cta"
-            onClick={() => setOpen(false)}
+            to="/profile"
+            className="lux-profile-button"
+            onClick={closeMenu}
           >
-            Plan a trip <span>↗</span>
+            <UserRound size={17} />
+            <span>Profile</span>
           </Link>
 
+          {/* PLAN A TRIP */}
+          <Link
+            to="/planner"
+            className="lux-plan-button"
+            onClick={closeMenu}
+          >
+            Plan a Trip
+            <ArrowUpRight size={17} />
+          </Link>
+
+          {/* LOGOUT */}
+          <button
+            className="lux-logout-button"
+            onClick={() => {
+              closeMenu();
+              logoutUser();
+            }}
+          >
+            <LogOut size={17} />
+            <span>Logout</span>
+          </button>
+
         </nav>
+
       </div>
     </header>
   );

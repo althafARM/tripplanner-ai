@@ -1,8 +1,8 @@
+
 import { useState } from "react";
 import type { ReactNode, FormEvent } from "react";
 import ReactMarkdown from "react-markdown";
 import { useSearchParams } from "react-router-dom";
-import AIChat from "../components/AIChat";
 
 import {
   CalendarDays,
@@ -21,6 +21,9 @@ import {
   ArrowRight,
   RefreshCw,
   CheckCircle2,
+  Compass,
+  Mountain,
+  ArrowUpRight,
 } from "lucide-react";
 
 import { generateTrip } from "../services/api";
@@ -47,53 +50,77 @@ interface ActivitySection {
   className: string;
 }
 
-// Split itinerary into activity sections
-const getActivitySections = (
-  text: string
-): ActivitySection[] => {
-  const sections = [
-    {
-      title: "MORNING",
-      icon: <Sunrise size={21} />,
-      className: "morning-card",
-    },
-    {
-      title: "AFTERNOON",
-      icon: <Sun size={21} />,
-      className: "afternoon-card",
-    },
-    {
-      title: "EVENING",
-      icon: <Moon size={21} />,
-      className: "evening-card",
-    },
-    {
-      title: "FOOD RECOMMENDATIONS",
-      icon: <Utensils size={21} />,
-      className: "food-card",
-    },
-    {
-      title: "TRANSPORT",
-      icon: <Car size={21} />,
-      className: "transport-card",
-    },
-    {
-      title: "ESTIMATED DAILY COST",
-      icon: <Wallet size={21} />,
-      className: "cost-card",
-    },
-  ];
+const activityDefinitions = [
+  {
+    title: "MORNING",
+    icon: <Sunrise size={20} />,
+    className: "morning",
+  },
+  {
+    title: "AFTERNOON",
+    icon: <Sun size={20} />,
+    className: "afternoon",
+  },
+  {
+    title: "EVENING",
+    icon: <Moon size={20} />,
+    className: "evening",
+  },
+  {
+    title: "FOOD RECOMMENDATIONS",
+    icon: <Utensils size={20} />,
+    className: "food",
+  },
+  {
+    title: "TRANSPORT",
+    icon: <Car size={20} />,
+    className: "transport",
+  },
+  {
+    title: "ESTIMATED DAILY COST",
+    icon: <Wallet size={20} />,
+    className: "cost",
+  },
+];
 
+// Split an itinerary into individual days.
+const getDayPlans = (text: string): DayPlan[] => {
+  const sections = text.split(
+    /(?=^\s{0,3}(?:#{1,6}\s*)?(?:\*\*)?DAY\s+\d+\b.*$)/gim
+  );
+
+  return sections
+    .map((section) => {
+      const lines = section.trim().split("\n");
+
+      const title = lines[0]
+        .replace(/^#{1,6}\s*/, "")
+        .replace(/\*\*/g, "")
+        .trim();
+
+      return {
+        title,
+        content: lines.slice(1).join("\n").trim(),
+      };
+    })
+    .filter(
+      (day) =>
+        /^DAY\s+\d+/i.test(day.title) &&
+        day.content.length > 0
+    );
+};
+
+// Split each day into morning, afternoon, evening, etc.
+const getActivitySections = (text: string): ActivitySection[] => {
   const headingPattern =
     /^\s*(?:#{1,6}\s*)?(?:\*\*)?(MORNING|AFTERNOON|EVENING|FOOD RECOMMENDATIONS|TRANSPORT|ESTIMATED DAILY COST)(?:\*\*)?\s*:?\s*$/gim;
 
   const matches = [...text.matchAll(headingPattern)];
 
-  return sections
+  return activityDefinitions
     .map((item) => {
       const matchIndex = matches.findIndex(
-        (match) =>
-          match[1].toUpperCase() === item.title
+        (match) => match[1].toUpperCase() === item.title
       );
 
       if (matchIndex === -1) {
@@ -101,15 +128,10 @@ const getActivitySections = (
       }
 
       const currentMatch = matches[matchIndex];
-
-      const start =
-        currentMatch.index! + currentMatch[0].length;
-
+      const start = currentMatch.index! + currentMatch[0].length;
       const nextMatch = matches[matchIndex + 1];
 
-      const end = nextMatch
-        ? nextMatch.index!
-        : text.length;
+      const end = nextMatch ? nextMatch.index! : text.length;
 
       return {
         ...item,
@@ -126,12 +148,9 @@ export default function TripPlanner() {
     searchParams.get("destination") || ""
   );
 
-  const [startLocation, setStartLocation] =
-    useState("Colombo");
-
+  const [startLocation, setStartLocation] = useState("Colombo");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-
   const [travellers, setTravellers] = useState(2);
   const [budget, setBudget] = useState("50000");
   const [style, setStyle] = useState("Relaxing");
@@ -145,7 +164,9 @@ export default function TripPlanner() {
   const [error, setError] = useState("");
   const [itinerary, setItinerary] = useState("");
 
-  // Calculate trip duration
+  const today = new Date().toISOString().split("T")[0];
+
+  // Calculate trip duration.
   const days =
     startDate && endDate
       ? Math.max(
@@ -158,7 +179,6 @@ export default function TripPlanner() {
         )
       : 0;
 
-  // Select or remove interests
   const toggleInterest = (interest: string) => {
     setInterests((previous) =>
       previous.includes(interest)
@@ -167,7 +187,7 @@ export default function TripPlanner() {
     );
   };
 
-  // Generate itinerary
+  // Generate the AI itinerary.
   const handleGenerate = async (
     event: FormEvent<HTMLFormElement>
   ) => {
@@ -214,9 +234,7 @@ export default function TripPlanner() {
       });
 
       if (!response?.itinerary) {
-        throw new Error(
-          "The AI did not return an itinerary."
-        );
+        throw new Error("The AI did not return an itinerary.");
       }
 
       setItinerary(response.itinerary);
@@ -232,7 +250,7 @@ export default function TripPlanner() {
     }
   };
 
-  // Reset planner
+  // Reset the planner.
   const resetPlanner = () => {
     setItinerary("");
     setError("");
@@ -243,96 +261,86 @@ export default function TripPlanner() {
     });
   };
 
-  // Split AI response into individual days
-  const getDayPlans = (text: string): DayPlan[] => {
-    const sections = text.split(
-      /(?=^\s{0,3}(?:#{1,6}\s*)?(?:\*\*)?DAY\s*\d+\b.*$)/gim
-    );
+  const dayPlans = itinerary ? getDayPlans(itinerary) : [];
 
-    return sections
-      .map((section) => {
-        const lines = section.trim().split("\n");
-
-        const title = lines[0]
-          .replace(/^#{1,6}\s*/, "")
-          .replace(/\*\*/g, "")
-          .trim();
-
-        return {
-          title,
-          content: lines.slice(1).join("\n").trim(),
-        };
-      })
-      .filter(
-        (day) =>
-          /^DAY\s*\d+/i.test(day.title) &&
-          day.content.length > 0
-      );
-  };
-
-  const dayPlans = itinerary
-    ? getDayPlans(itinerary)
-    : [];
-
-  // Google Maps directions URL
   const googleMapsUrl = `https://www.google.com/maps/dir/${encodeURIComponent(
     startLocation.trim()
   )}/${encodeURIComponent(destination.trim())}`;
 
   return (
-    <div className="planner-page">
+    <div className="midnight-planner-page">
 
-      {/* PAGE HEADER */}
-      <section className="planner-hero">
-        <div className="planner-hero-content">
-          <span className="planner-badge">
-            <Sparkles size={15} />
-            AI POWERED TRAVEL PLANNER
+      {/* HERO SECTION */}
+      <section className="midnight-planner-hero">
+        <div className="midnight-planner-hero-overlay" />
+
+        <div className="midnight-planner-hero-content">
+          <span className="midnight-planner-eyebrow">
+            <Sparkles size={16} />
+            YOUR PERSONAL TRAVEL DESIGNER
           </span>
 
           <h1>
-            Your next adventure,
+            Every journey
             <br />
-            <span>beautifully planned.</span>
+            <span>starts with a dream.</span>
           </h1>
 
           <p>
-            Tell us what you love. Our AI will create a
-            personalised travel experience just for you.
+            Tell us where you want to go. Let AI transform
+            your travel ideas into a personalised adventure.
           </p>
+
+          <div className="midnight-planner-hero-details">
+            <span>
+              <Compass size={17} />
+              Discover new places
+            </span>
+
+            <span>
+              <Sparkles size={17} />
+              AI-powered planning
+            </span>
+          </div>
+        </div>
+
+        <div className="midnight-planner-hero-decoration">
+          <Mountain size={90} strokeWidth={0.8} />
         </div>
       </section>
 
-      <div className="planner-container">
+      <main className="midnight-planner-container">
 
         {/* TRIP FORM */}
         {!itinerary && (
-          <div className="planner-layout">
+          <div className="midnight-planner-layout">
 
             {/* LEFT FORM */}
-            <div className="planner-form-card">
-              <div className="planner-card-heading">
+            <section className="midnight-planner-form-card">
+
+              <div className="midnight-planner-card-heading">
                 <div>
-                  <span className="planner-step">
-                    STEP 01
+                  <span className="midnight-planner-step">
+                    STEP 01 — YOUR JOURNEY
                   </span>
 
-                  <h2>Plan your journey</h2>
+                  <h2>Plan your adventure</h2>
 
                   <p>
-                    Tell us a little about your dream trip.
+                    Complete the details below to create
+                    your personalised travel plan.
                   </p>
                 </div>
 
-                <div className="planner-heading-icon">
-                  <Plane size={25} />
+                <div className="midnight-planner-heading-icon">
+                  <Plane size={27} />
                 </div>
               </div>
 
               <form onSubmit={handleGenerate}>
 
                 {/* DESTINATION */}
-                <div className="form-group">
+                <div className="midnight-planner-form-group">
                   <label>
                     <MapPin size={17} />
                     Where do you want to go?
@@ -342,17 +350,15 @@ export default function TripPlanner() {
                     type="text"
                     placeholder="e.g. Ella, Sri Lanka"
                     value={destination}
-                    onChange={(e) =>
-                      setDestination(e.target.value)
-                    }
+                    onChange={(e) => setDestination(e.target.value)}
                     required
                   />
                 </div>
 
                 {/* START LOCATION */}
-                <div className="form-group">
+                <div className="midnight-planner-form-group">
                   <label>
-                    <MapPin size={17} />
+                    <Compass size={17} />
                     Starting location
                   </label>
 
@@ -360,16 +366,15 @@ export default function TripPlanner() {
                     type="text"
                     placeholder="e.g. Colombo"
                     value={startLocation}
-                    onChange={(e) =>
-                      setStartLocation(e.target.value)
-                    }
+                    onChange={(e) => setStartLocation(e.target.value)}
                     required
                   />
                 </div>
 
                 {/* DATES */}
-                <div className="form-row">
-                  <div className="form-group">
+                <div className="midnight-planner-form-row">
+
+                  <div className="midnight-planner-form-group">
                     <label>
                       <CalendarDays size={17} />
                       Start date
@@ -378,17 +383,13 @@ export default function TripPlanner() {
                     <input
                       type="date"
                       value={startDate}
-                      onChange={(e) =>
-                        setStartDate(e.target.value)
-                      }
-                      min={
-                        new Date().toISOString().split("T")[0]
-                      }
+                      min={today}
+                      onChange={(e) => setStartDate(e.target.value)}
                       required
                     />
                   </div>
 
-                  <div className="form-group">
+                  <div className="midnight-planner-form-group">
                     <label>
                       <CalendarDays size={17} />
                       End date
@@ -397,45 +398,48 @@ export default function TripPlanner() {
                     <input
                       type="date"
                       value={endDate}
-                      onChange={(e) =>
-                        setEndDate(e.target.value)
-                      }
-                      min={
-                        startDate ||
-                        new Date().toISOString().split("T")[0]
-                      }
+                      min={startDate || today}
+                      onChange={(e) => setEndDate(e.target.value)}
                       required
                     />
                   </div>
+
+                </div>
+
+                {/* DURATION */}
+                <div className="midnight-planner-duration">
+                  <Clock size={17} />
+
+                  {days > 0
+                    ? `Your journey: ${days} ${days === 1 ? "day" : "days"}`
+                    : "Select your dates to calculate trip duration"}
                 </div>
 
                 {/* TRAVELLERS */}
-                <div className="form-group">
+                <div className="midnight-planner-form-group">
                   <label>
                     <Users size={17} />
                     Number of travellers
                   </label>
 
-                  <div className="traveller-control">
+                  <div className="midnight-planner-traveller-control">
                     <button
                       type="button"
                       onClick={() =>
-                        setTravellers((value) =>
-                          Math.max(1, value - 1)
-                        )
+                        setTravellers((value) => Math.max(1, value - 1))
                       }
                     >
                       −
                     </button>
 
-                    <span>{travellers} Travellers</span>
+                    <span>
+                      {travellers} Travellers
+                    </span>
 
                     <button
                       type="button"
                       onClick={() =>
-                        setTravellers((value) =>
-                          Math.min(20, value + 1)
-                        )
+                        setTravellers((value) => Math.min(20, value + 1))
                       }
                     >
                       +
@@ -444,32 +448,34 @@ export default function TripPlanner() {
                 </div>
 
                 {/* BUDGET */}
-                <div className="form-group">
+                <div className="midnight-planner-form-group">
                   <label>
                     <Wallet size={17} />
                     Your total budget (LKR)
                   </label>
 
-                  <input
-                    type="number"
-                    min="1000"
-                    placeholder="50000"
-                    value={budget}
-                    onChange={(e) =>
-                      setBudget(e.target.value)
-                    }
-                    required
-                  />
+                  <div className="midnight-planner-budget-input">
+                    <span>LKR</span>
+
+                    <input
+                      type="number"
+                      min="1000"
+                      placeholder="50000"
+                      value={budget}
+                      onChange={(e) => setBudget(e.target.value)}
+                      required
+                    />
+                  </div>
                 </div>
 
                 {/* TRAVEL STYLE */}
-                <div className="form-group">
+                <div className="midnight-planner-form-group">
                   <label>
                     <Sparkles size={17} />
-                    Travel style
+                    Choose your travel style
                   </label>
 
-                  <div className="style-options">
+                  <div className="midnight-planner-style-options">
                     {[
                       "Relaxing",
                       "Adventure",
@@ -481,8 +487,8 @@ export default function TripPlanner() {
                         key={item}
                         className={
                           style === item
-                            ? "style-option active"
-                            : "style-option"
+                            ? "midnight-planner-style-option active"
+                            : "midnight-planner-style-option"
                         }
                         onClick={() => setStyle(item)}
                       >
@@ -493,25 +499,23 @@ export default function TripPlanner() {
                 </div>
 
                 {/* INTERESTS */}
-                <div className="form-group">
+                <div className="midnight-planner-form-group">
                   <label>
                     <Sparkles size={17} />
-                    What do you love?
+                    What experiences do you love?
                   </label>
 
-                  <div className="interest-options">
+                  <div className="midnight-planner-interest-options">
                     {interestsList.map((interest) => (
                       <button
                         type="button"
                         key={interest}
                         className={
                           interests.includes(interest)
-                            ? "interest-option active"
-                            : "interest-option"
+                            ? "midnight-planner-interest-option active"
+                            : "midnight-planner-interest-option"
                         }
-                        onClick={() =>
-                          toggleInterest(interest)
-                        }
+                        onClick={() => toggleInterest(interest)}
                       >
                         {interests.includes(interest) && (
                           <CheckCircle2 size={14} />
@@ -525,23 +529,20 @@ export default function TripPlanner() {
 
                 {/* ERROR */}
                 {error && (
-                  <div className="planner-error">
+                  <div className="midnight-planner-error">
                     {error}
                   </div>
                 )}
 
-                {/* SUBMIT */}
+                {/* GENERATE BUTTON */}
                 <button
                   type="submit"
-                  className="generate-trip-btn"
+                  className="midnight-planner-generate-button"
                   disabled={loading}
                 >
                   {loading ? (
                     <>
-                      <RefreshCw
-                        size={19}
-                        className="spin"
-                      />
+                      <RefreshCw size={19} className="midnight-spin" />
                       Creating your adventure...
                     </>
                   ) : (
@@ -552,29 +553,50 @@ export default function TripPlanner() {
                     </>
                   )}
                 </button>
+
+                <p className="midnight-planner-form-note">
+                  <CheckCircle2 size={14} />
+                  Your journey will be personalised using your preferences.
+                </p>
+
               </form>
-            </div>
+            </section>
 
             {/* RIGHT SIDEBAR */}
-            <aside className="planner-sidebar">
-              <div className="planner-sidebar-image">
-                <div className="sidebar-image-overlay">
-                  <span>YOUR NEXT ADVENTURE</span>
+            <aside className="midnight-planner-sidebar">
 
-                  <h2>Explore more. Worry less.</h2>
+              <div className="midnight-planner-sidebar-image">
+                <div className="midnight-planner-sidebar-overlay">
+                  <span>DISCOVER THE EXTRAORDINARY</span>
+
+                  <h2>
+                    Make memories.
+                    <br />
+                    Not just plans.
+                  </h2>
 
                   <p>
-                    Let AI help you discover amazing places
-                    and experiences.
+                    Discover beautiful destinations and
+                    unforgettable experiences with your
+                    personal AI travel assistant.
                   </p>
                 </div>
               </div>
 
-              <div className="planner-summary-card">
-                <h3>Your trip summary</h3>
+              {/* SUMMARY */}
+              <div className="midnight-planner-summary-card">
+                <div className="midnight-planner-summary-heading">
+                  <div>
+                    <span>YOUR JOURNEY</span>
+                    <h3>Trip summary</h3>
+                  </div>
 
-                <div className="summary-item">
-                  <MapPin size={18} />
+                  <Plane size={23} />
+                </div>
+
+                <div className="midnight-planner-summary-item">
+                  <MapPin size={19} />
+
                   <div>
                     <span>Destination</span>
                     <strong>
@@ -583,8 +605,9 @@ export default function TripPlanner() {
                   </div>
                 </div>
 
-                <div className="summary-item">
-                  <CalendarDays size={18} />
+                <div className="midnight-planner-summary-item">
+                  <CalendarDays size={19} />
+
                   <div>
                     <span>Duration</span>
                     <strong>
@@ -593,57 +616,74 @@ export default function TripPlanner() {
                   </div>
                 </div>
 
-                <div className="summary-item">
-                  <Users size={18} />
+                <div className="midnight-planner-summary-item">
+                  <Users size={19} />
+
                   <div>
                     <span>Travellers</span>
                     <strong>{travellers} People</strong>
                   </div>
                 </div>
 
-                <div className="summary-item">
-                  <Wallet size={18} />
+                <div className="midnight-planner-summary-item">
+                  <Wallet size={19} />
+
                   <div>
-                    <span>Budget</span>
+                    <span>Total budget</span>
                     <strong>
                       LKR {Number(budget || 0).toLocaleString()}
                     </strong>
                   </div>
                 </div>
+
+                <div className="midnight-planner-summary-item">
+                  <Sparkles size={19} />
+
+                  <div>
+                    <span>Travel style</span>
+                    <strong>{style}</strong>
+                  </div>
+                </div>
               </div>
 
-              <div className="planner-tip-card">
-                <Lightbulb size={22} />
+              {/* TRAVEL TIP */}
+              <div className="midnight-planner-tip">
+                <div className="midnight-planner-tip-icon">
+                  <Lightbulb size={23} />
+                </div>
 
                 <div>
-                  <h4>Travel tip</h4>
+                  <h4>A little travel tip</h4>
 
                   <p>
                     Choose your interests carefully. Your AI
-                    itinerary will be personalised around the
+                    itinerary will be designed around the
                     experiences you enjoy.
                   </p>
                 </div>
               </div>
+
             </aside>
           </div>
         )}
 
         {/* LOADING SCREEN */}
         {loading && (
-          <div className="trip-loading">
-            <div className="loading-animation">
-              <Plane size={38} />
+          <div className="midnight-planner-loading">
+            <div className="midnight-planner-loading-icon">
+              <Plane size={36} />
             </div>
+
+            <span>YOUR ADVENTURE IS TAKING SHAPE</span>
 
             <h2>Creating your dream trip...</h2>
 
             <p>
               Our AI is preparing destinations, activities
-              and travel ideas. Please wait a moment.
+              and travel ideas just for you.
             </p>
 
-            <div className="loading-progress">
+            <div className="midnight-planner-progress">
               <span />
             </div>
           </div>
@@ -651,12 +691,12 @@ export default function TripPlanner() {
 
         {/* ITINERARY RESULT */}
         {itinerary && (
-          <section className="itinerary-result">
+          <section className="midnight-planner-result">
 
             {/* RESULT HEADER */}
-            <div className="result-header">
+            <div className="midnight-planner-result-header">
               <div>
-                <span className="planner-badge">
+                <span className="midnight-planner-step">
                   <Sparkles size={15} />
                   YOUR PERSONAL AI ITINERARY
                 </span>
@@ -667,13 +707,13 @@ export default function TripPlanner() {
                 </h1>
 
                 <p>
-                  Your personalised travel plan is ready.
+                  Your personalised travel experience is ready.
                   Get ready to explore!
                 </p>
               </div>
 
               <button
-                className="new-trip-btn"
+                className="midnight-planner-new-trip-button"
                 onClick={resetPlanner}
               >
                 <RefreshCw size={17} />
@@ -682,164 +722,173 @@ export default function TripPlanner() {
             </div>
 
             {/* TRIP OVERVIEW */}
-            <div className="result-overview">
-              <div className="overview-item">
-                <div className="overview-icon">
-                  <MapPin />
-                </div>
+            <div className="midnight-planner-result-overview">
 
+              <div className="midnight-planner-overview-item">
+                <MapPin size={22} />
                 <div>
                   <span>Destination</span>
                   <strong>{destination}</strong>
                 </div>
               </div>
 
-              <div className="overview-item">
-                <div className="overview-icon">
-                  <CalendarDays />
-                </div>
-
+              <div className="midnight-planner-overview-item">
+                <CalendarDays size={22} />
                 <div>
                   <span>Duration</span>
                   <strong>{days} Days</strong>
                 </div>
               </div>
 
-              <div className="overview-item">
-                <div className="overview-icon">
-                  <Users />
-                </div>
-
+              <div className="midnight-planner-overview-item">
+                <Users size={22} />
                 <div>
                   <span>Travellers</span>
                   <strong>{travellers} People</strong>
                 </div>
               </div>
 
-              <div className="overview-item">
-                <div className="overview-icon">
-                  <Wallet />
-                </div>
-
+              <div className="midnight-planner-overview-item">
+                <Wallet size={22} />
                 <div>
-                  <span>Planned Budget</span>
+                  <span>Planned budget</span>
                   <strong>
                     LKR {Number(budget).toLocaleString()}
                   </strong>
                 </div>
               </div>
+
             </div>
 
-            {/* WEATHER LEFT - MAP RIGHT */}
-            <div className="travel-tools">
+            {/* WEATHER AND MAP */}
+            <div className="midnight-planner-travel-tools">
 
-              {/* LEFT SIDE - WEATHER */}
-              <div className="weather-side">
+              <div className="midnight-planner-weather">
                 <WeatherCard destination={destination} />
               </div>
 
-              {/* RIGHT SIDE - GOOGLE MAPS */}
-              <div className="map-route-section">
-                <div>
-                  <h3>Explore Your Route</h3>
-
-                  <p>
-                    View your journey from {startLocation} to{" "}
-                    {destination}.
-                  </p>
+              <div className="midnight-planner-map-card">
+                <div className="midnight-planner-map-decoration">
+                  <MapPin size={27} />
                 </div>
+
+                <span>EXPLORE YOUR ROUTE</span>
+
+                <h3>Your journey awaits.</h3>
+
+                <p>
+                  View your route from {startLocation} to{" "}
+                  {destination}.
+                </p>
 
                 <a
                   href={googleMapsUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="map-route-button"
+                  className="midnight-planner-map-button"
                 >
-                  <MapPin size={16} />
                   View Google Maps
+                  <ArrowUpRight size={17} />
                 </a>
               </div>
+
             </div>
 
             {/* ITINERARY HEADING */}
-            <div className="itinerary-heading">
-              <div>
-                <span className="planner-step">
-                  YOUR TRAVEL SCHEDULE
-                </span>
+            <div className="midnight-planner-itinerary-heading">
+              <span>YOUR TRAVEL SCHEDULE</span>
 
-                <h2>Explore your journey</h2>
+              <h2>Explore your journey</h2>
 
-                <p>
-                  A day-by-day plan created around your
-                  preferences.
-                </p>
-              </div>
+              <p>
+                A day-by-day itinerary created around your
+                preferences.
+              </p>
             </div>
 
             {/* DAILY ITINERARY */}
-            <div className="itinerary-days">
-              {dayPlans.map((day, index) => (
-                <article
-                  className="itinerary-day-card"
-                  key={index}
-                >
-                  <div className="day-number">
-                    <span>DAY</span>
-                    <strong>{index + 1}</strong>
-                  </div>
+            <div className="midnight-planner-days">
 
-                  <div className="day-content">
-                    <h3>{day.title}</h3>
+              {dayPlans.length > 0 ? (
+                dayPlans.map((day, index) => {
+                  const activities = getActivitySections(day.content);
 
-                    <div className="activity-grid">
-                      {getActivitySections(day.content).map(
-                        (activity) => (
-                          <div
-                            className={`activity-card ${activity.className}`}
-                            key={activity.title}
-                          >
-                            <div className="activity-card-heading">
-                              <div className="activity-card-icon">
-                                {activity.icon}
+                  return (
+                    <article
+                      className="midnight-planner-day-card"
+                      key={index}
+                    >
+                      <div className="midnight-planner-day-number">
+                        <span>DAY</span>
+                        <strong>{index + 1}</strong>
+                      </div>
+
+                      <div className="midnight-planner-day-content">
+                        <h3>{day.title}</h3>
+
+                        {activities.length > 0 ? (
+                          <div className="midnight-planner-activity-grid">
+                            {activities.map((activity) => (
+                              <div
+                                className={`midnight-planner-activity-card ${activity.className}`}
+                                key={activity.title}
+                              >
+                                <div className="midnight-planner-activity-heading">
+                                  <div>
+                                    {activity.icon}
+                                  </div>
+
+                                  <h4>{activity.title}</h4>
+                                </div>
+
+                                <div className="midnight-planner-activity-content">
+                                  <ReactMarkdown>
+                                    {activity.content}
+                                  </ReactMarkdown>
+                                </div>
                               </div>
-
-                              <h4>{activity.title}</h4>
-                            </div>
-
-                            <div className="activity-card-content">
-                              <ReactMarkdown>
-                                {activity.content}
-                              </ReactMarkdown>
-                            </div>
+                            ))}
                           </div>
-                        )
-                      )}
-                    </div>
+                        ) : (
+                          <div className="midnight-planner-full-day-content">
+                            <ReactMarkdown>
+                              {day.content}
+                            </ReactMarkdown>
+                          </div>
+                        )}
 
-                    <div className="day-footer">
-                      <span>
-                        <Clock size={15} />
-                        Daily travel plan
-                      </span>
+                        <div className="midnight-planner-day-footer">
+                          <span>
+                            <Clock size={15} />
+                            Daily travel plan
+                          </span>
 
-                      <span>
-                        <CheckCircle2 size={15} />
-                        AI generated
-                      </span>
-                    </div>
-                  </div>
-                </article>
-              ))}
+                          <span>
+                            <CheckCircle2 size={15} />
+                            AI generated
+                          </span>
+                        </div>
+                      </div>
+                    </article>
+                  );
+                })
+              ) : (
+                <div className="midnight-planner-full-itinerary">
+                  <ReactMarkdown>
+                    {itinerary}
+                  </ReactMarkdown>
+                </div>
+              )}
+
             </div>
 
             {/* TRAVEL TIPS */}
-            <div className="result-tips">
-              <div className="tips-icon">
-                <Lightbulb size={24} />
+            <div className="midnight-planner-result-tip">
+              <div>
+                <Lightbulb size={25} />
               </div>
 
-              <div>
+              <section>
                 <h3>Before you travel</h3>
 
                 <p>
@@ -848,20 +897,21 @@ export default function TripPlanner() {
                   arrangements and prices with the relevant
                   providers before travelling.
                 </p>
-              </div>
+              </section>
             </div>
 
-            {/* CREATE ANOTHER TRIP */}
             <button
-              className="generate-trip-btn result-bottom-btn"
+              className="midnight-planner-result-bottom-button"
               onClick={resetPlanner}
             >
               <RefreshCw size={18} />
               Plan Another Adventure
             </button>
+
           </section>
         )}
-      </div>
+
+      </main>
     </div>
   );
 }
