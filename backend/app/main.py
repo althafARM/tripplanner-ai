@@ -7,6 +7,15 @@ from app.api.trips import router as trips_router
 from app.api.chat import router as chat_router
 from app.api.monitoring import router as monitoring_router
 from app.api.users import router as users_router
+from app.database.connection import Base, engine
+from app.models import User, Trip, CostEstimate
+
+from app.api.maps import router as maps_router
+from app.api.costs import router as costs_router
+from app.api.cost_estimates import router as cost_estimates_router
+
+# Create database tables
+Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
 title="TripPlanner AI API",
@@ -35,7 +44,9 @@ app.include_router(chat_router)
 app.include_router(admin_router)
 app.include_router(monitoring_router)
 app.include_router(users_router)
-# Add admin router here
+app.include_router(maps_router)
+app.include_router(costs_router)
+app.include_router(cost_estimates_router)
 
 
 @app.get("/")
