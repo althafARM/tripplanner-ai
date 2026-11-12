@@ -87,30 +87,6 @@ function getGoogleMapsRouteUrl(trip: SavedTrip) {
   return `https://www.google.com/maps/dir/?${params.toString()}`;
 }
 
-// Get sightseeing locations for the interactive map
-function getTripMapLocations(trip: SavedTrip): string[] {
-  const knownLocations = [
-    "Sigiriya Rock Fortress",
-    "Pidurangala Rock",
-    "Dambulla Cave Temple",
-    "Kandalama Lake",
-  ];
-
-  const itinerary = trip.itinerary.toLowerCase();
-
-  const stops = knownLocations.filter((location) =>
-    itinerary.includes(location.toLowerCase())
-  );
-
-  return [
-    trip.start_location,
-    trip.destination,
-    ...stops.filter(
-      (location) =>
-        location.toLowerCase() !== trip.destination.toLowerCase()
-    ),
-  ];
-}
 
 export default function MyTrips() {
   const [trips, setTrips] = useState<SavedTrip[]>([]);

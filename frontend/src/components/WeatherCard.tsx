@@ -7,9 +7,6 @@ import {
   Sun,
   CloudSnow,
   CloudFog,
-  Thermometer,
-  Droplets,
-  Wind,
 } from "lucide-react";
 
 import {

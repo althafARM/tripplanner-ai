@@ -53,7 +53,7 @@ export default function Home() {
           muted
           loop
           playsInline
-          poster="/images/sri-lanka-hero.jpg"
+          poster="/images/sigiriya.png"
           onPlay={() => setIsPlaying(true)}
           onPause={() => setIsPlaying(false)}
         >

@@ -42,7 +42,7 @@
       rgba(3, 42, 52, 0.55),
       rgba(3, 42, 52, 0.9)
     ),
-    url("/images/sri-lanka-hero.jpg") center / cover no-repeat;
+    url("/images/sigiriya.png") center / cover no-repeat;
 }
 
 .midnight-auth-visual-overlay {

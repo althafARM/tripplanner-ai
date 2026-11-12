@@ -7,7 +7,6 @@ import {
   Compass,
   Lock,
   Mail,
-  LogIn,
   ArrowRight,
   Sparkles,
 } from "lucide-react";

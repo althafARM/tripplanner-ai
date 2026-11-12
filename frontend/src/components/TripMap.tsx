@@ -93,7 +93,7 @@ function MapUpdater({
 
 // Main TripMap component
 export default function TripMap({
-  itinerary,
+  itinerary = "",
 }: TripMapProps) {
 
   const [mapLocations, setMapLocations] =

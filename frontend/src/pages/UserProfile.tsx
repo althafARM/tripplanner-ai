@@ -100,7 +100,7 @@ export default function UserProfile() {
         muted
         loop
         playsInline
-        poster="/images/sri-lanka-hero.jpg"
+        poster="/images/sigiriya.png"
       >
         <source
           src="/videos/sri-lanka-hero.mp4"
