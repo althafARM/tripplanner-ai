@@ -54,7 +54,7 @@ export const sampleDestinations: Destination[] = [
       "Cool weather, tea gardens and peaceful mountain landscapes.",
     budget: "Medium",
     image:
-      "/images/nuwaraeliya.png",
+      "/images/nuwara-eliya.png",
   },
   {
     id: 6,
