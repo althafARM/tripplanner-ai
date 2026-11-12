@@ -1,0 +1,509 @@
+/* =====================================
+   TROPICAL DESTINATION CARD
+===================================== */
+
+.tropical-destination-card {
+  overflow: hidden;
+  border-radius: 18px;
+  background: #ffffff;
+  border: 1px solid #e8eee8;
+  box-shadow: 0 12px 35px rgba(6, 75, 80, 0.07);
+  transition: all 0.35s ease;
+}
+
+.tropical-destination-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 22px 45px rgba(6, 75, 80, 0.15);
+}
+
+.tropical-destination-image {
+  position: relative;
+  height: 250px;
+  overflow: hidden;
+}
+
+.tropical-destination-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s ease;
+}
+
+.tropical-destination-card:hover
+.tropical-destination-image img {
+  transform: scale(1.08);
+}
+
+.tropical-destination-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    0deg,
+    rgba(3, 42, 46, 0.65),
+    transparent 65%
+  );
+}
+
+.tropical-category-pill {
+  position: absolute;
+  top: 18px;
+  left: 18px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 13px;
+  border-radius: 30px;
+  background: #fffaf2;
+  color: #087e8b;
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.tropical-image-location {
+  position: absolute;
+  bottom: 17px;
+  left: 18px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: white;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.tropical-destination-content {
+  padding: 24px;
+}
+
+.tropical-destination-content h3 {
+  margin: 0 0 12px;
+  color: #064b50;
+  font-size: 23px;
+  font-weight: 800;
+}
+
+.tropical-destination-content > p {
+  min-height: 55px;
+  margin-bottom: 22px;
+  color: #71827d;
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.tropical-destination-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-top: 18px;
+  border-top: 1px solid #e9eee9;
+}
+
+.tropical-destination-budget {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.tropical-destination-budget span {
+  color: #84928d;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 1px;
+}
+
+.tropical-destination-budget strong {
+  color: #087e8b;
+  font-size: 16px;
+}
+
+.tropical-destination-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 12px 15px;
+  border-radius: 8px;
+  background: #ff8057;
+  color: white;
+  font-size: 12px;
+  font-weight: 800;
+  text-decoration: none;
+  transition: 0.3s ease;
+}
+
+.tropical-destination-button:hover {
+  background: #e96943;
+  transform: translateY(-2px);
+}
+
+@media (max-width: 600px) {
+  .tropical-destination-image {
+    height: 220px;
+  }
+
+  .tropical-destination-content {
+    padding: 19px;
+  }
+
+  .tropical-destination-content h3 {
+    font-size: 20px;
+  }
+}
+
+/* =========================================
+   TROPICAL DESTINATION VIDEO
+========================================= */
+
+.tropical-destination-image {
+  position: relative;
+  height: 250px;
+  overflow: hidden;
+  background: #07505e;
+  border-radius: 18px 18px 0 0;
+}
+
+/* Fallback image */
+
+.tropical-destination-fallback {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Destination video */
+
+.tropical-destination-video {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+
+  transition: transform 0.7s ease;
+}
+
+.tropical-destination-card:hover
+.tropical-destination-video {
+  transform: scale(1.08);
+}
+
+/* Video overlay */
+
+.tropical-destination-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 35, 45, 0.12),
+    transparent 35%,
+    rgba(0, 35, 45, 0.72)
+  );
+
+  pointer-events: none;
+}
+
+/* Video indicator */
+
+.tropical-video-indicator {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  z-index: 3;
+
+  display: flex;
+  align-items: center;
+  gap: 7px;
+
+  padding: 8px 12px;
+
+  color: #ffffff;
+  background: rgba(7, 80, 94, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 30px;
+
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 1px;
+
+  backdrop-filter: blur(10px);
+}
+
+.tropical-video-indicator svg {
+  color: #ffad70;
+}
+
+/* Category */
+
+.tropical-category-pill {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  z-index: 3;
+}
+
+/* Location */
+
+.tropical-image-location {
+  position: absolute;
+  bottom: 17px;
+  left: 18px;
+  z-index: 3;
+
+  color: #ffffff;
+}
+
+/* Destination card hover */
+
+.tropical-destination-card {
+  transition:
+    transform 0.35s ease,
+    box-shadow 0.35s ease;
+}
+
+.tropical-destination-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 18px 38px rgba(7, 80, 94, 0.16);
+}
+
+/* Responsive */
+
+@media (max-width: 600px) {
+  .tropical-destination-image {
+    height: 220px;
+  }
+
+  .tropical-video-indicator {
+    padding: 7px 10px;
+    font-size: 8px;
+  }
+}
+
+/* HOVER VIDEO BEHAVIOUR */
+
+.tropical-destination-video {
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.tropical-destination-card:hover
+.tropical-destination-video {
+  opacity: 1;
+}
+
+.tropical-destination-fallback {
+  transition: transform 0.6s ease;
+}
+
+.tropical-destination-card:hover
+.tropical-destination-fallback {
+  transform: scale(1.05);
+}
+
+/* VIDEO STATUS */
+
+.tropical-video-indicator {
+  transition: all 0.3s ease;
+}
+
+.tropical-destination-card:hover
+.tropical-video-indicator {
+  background: rgba(7, 126, 139, 0.95);
+}
+
+/* TOUCH SCREEN SUPPORT */
+
+@media (hover: none) {
+  .tropical-destination-video {
+    display: none;
+  }
+
+  .tropical-video-indicator span::after {
+    content: " ON DESKTOP";
+  }
+}
+
+/* VIDEO FIRST FRAME */
+
+.tropical-destination-video {
+  opacity: 1;
+  transition: opacity 0.4s ease;
+}
+
+/* Hide video until hover */
+.tropical-destination-card:not(:hover)
+.tropical-destination-video {
+  opacity: 0;
+}
+
+/* Show video on hover */
+.tropical-destination-card:hover
+.tropical-destination-video {
+  opacity: 1;
+}
+
+/* =========================================
+   DESTINATION VIDEO PREVIEW
+========================================= */
+
+.tropical-destination-image {
+  position: relative;
+  height: 250px;
+  overflow: hidden;
+  background: #07505e;
+  border-radius: 18px 18px 0 0;
+}
+
+/* Destination photo */
+
+.tropical-destination-fallback {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 1;
+  transition:
+    opacity 0.4s ease,
+    transform 0.6s ease;
+}
+
+/* Hide photo when video is ready */
+
+.tropical-destination-fallback.image-hidden {
+  opacity: 0;
+}
+
+/* Video first frame */
+
+.tropical-destination-video {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+}
+
+/* Display first frame after video loads */
+
+.tropical-destination-video.video-ready {
+  opacity: 1;
+}
+
+/* Video zoom on hover */
+
+.tropical-destination-card:hover
+.tropical-destination-video {
+  transform: scale(1.06);
+}
+
+/* Image overlay */
+
+.tropical-destination-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 35, 45, 0.12),
+    transparent 35%,
+    rgba(0, 35, 45, 0.72)
+  );
+  pointer-events: none;
+}
+
+/* Category label */
+
+.tropical-category-pill {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  z-index: 3;
+}
+
+/* Video indicator */
+
+.tropical-video-indicator {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 12px;
+  color: #ffffff;
+  background: rgba(7, 80, 94, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 30px;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  backdrop-filter: blur(10px);
+}
+
+.tropical-video-dot {
+  width: 7px;
+  height: 7px;
+  background: #ffad70;
+  border-radius: 50%;
+}
+
+/* Location */
+
+.tropical-image-location {
+  position: absolute;
+  bottom: 17px;
+  left: 18px;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: #ffffff;
+}
+
+/* Card hover */
+
+.tropical-destination-card {
+  transition:
+    transform 0.35s ease,
+    box-shadow 0.35s ease;
+}
+
+.tropical-destination-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 18px 38px rgba(7, 80, 94, 0.16);
+}
+
+/* Image zoom */
+
+.tropical-destination-card:hover
+.tropical-destination-fallback {
+  transform: scale(1.05);
+}
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media (max-width: 600px) {
+  .tropical-destination-image {
+    height: 220px;
+  }
+
+  .tropical-video-indicator {
+    padding: 7px 10px;
+    font-size: 8px;
+  }
+}

@@ -1,0 +1,455 @@
+/* =========================================
+   TRIPPLANNER AI - REGISTRATION PAGE
+   Tropical Sri Lanka Theme
+   Ocean Blue & Sunset Orange
+========================================= */
+
+.midnight-auth-page {
+  min-height: 100vh;
+  padding: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #063b46, #087e8b);
+  font-family: inherit;
+}
+
+.midnight-auth-wrapper {
+  width: 100%;
+  max-width: 1200px;
+  min-height: 720px;
+  display: grid;
+  grid-template-columns: 1fr 0.9fr;
+  overflow: hidden;
+  border-radius: 25px;
+  background: #ffffff;
+  box-shadow: 0 25px 80px rgba(0, 0, 0, 0.3);
+}
+
+/* LEFT VISUAL SECTION */
+
+.midnight-auth-visual {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 40px;
+  color: white;
+  overflow: hidden;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(3, 42, 52, 0.55),
+      rgba(3, 42, 52, 0.9)
+    ),
+    url("/images/sri-lanka-hero.jpg") center / cover no-repeat;
+}
+
+.midnight-auth-visual-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(4, 71, 83, 0.35),
+    rgba(2, 37, 48, 0.55)
+  );
+}
+
+.midnight-auth-brand,
+.midnight-auth-visual-content,
+.midnight-auth-image-credit {
+  position: relative;
+  z-index: 2;
+}
+
+.midnight-auth-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: white;
+  text-decoration: none;
+  font-size: 23px;
+  font-weight: 800;
+}
+
+.midnight-auth-brand strong {
+  color: #ffad68;
+}
+
+.midnight-auth-brand-icon {
+  width: 45px;
+  height: 45px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 14px;
+  color: white;
+  background: #087e8b;
+}
+
+.midnight-auth-visual-content {
+  max-width: 470px;
+}
+
+.midnight-auth-eyebrow,
+.midnight-auth-form-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #f28c45;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 2px;
+}
+
+.midnight-auth-visual-content h1 {
+  margin: 25px 0 20px;
+  color: white;
+  font-size: clamp(38px, 4vw, 55px);
+  line-height: 1.12;
+  font-weight: 800;
+}
+
+.midnight-auth-visual-content h1 span {
+  color: #ffad68;
+}
+
+.midnight-auth-visual-content > p {
+  max-width: 420px;
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 15px;
+  line-height: 1.9;
+}
+
+.midnight-register-benefits {
+  display: grid;
+  gap: 17px;
+  margin-top: 35px;
+}
+
+.midnight-register-benefits div {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  color: white;
+  font-size: 14px;
+}
+
+.midnight-register-benefits svg {
+  color: #ffad68;
+}
+
+.midnight-auth-visual-footer {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 45px;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 13px;
+}
+
+.midnight-auth-gold-line {
+  width: 40px;
+  height: 2px;
+  background: #f28c45;
+}
+
+.midnight-auth-image-credit {
+  align-self: flex-end;
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 10px;
+  letter-spacing: 2px;
+}
+
+/* RIGHT FORM SECTION */
+
+.midnight-auth-form-section {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 38px 55px 25px;
+  background: #ffffff;
+}
+
+.midnight-auth-form-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  color: #07505e;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+}
+
+.midnight-auth-secure {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #087e8b;
+  font-size: 11px;
+  letter-spacing: 0;
+}
+
+.midnight-auth-form-content {
+  width: 100%;
+  max-width: 400px;
+  margin: 35px auto;
+}
+
+.midnight-auth-mobile-logo {
+  display: none;
+  color: #087e8b;
+}
+
+.midnight-auth-form-content h2 {
+  margin: 13px 0 8px;
+  color: #073b46;
+  font-size: 39px;
+  font-weight: 800;
+  letter-spacing: -1.5px;
+}
+
+.midnight-auth-form-content h2 span {
+  color: #f28c45;
+}
+
+.midnight-auth-description {
+  margin-bottom: 30px;
+  color: #71858a;
+  font-size: 14px;
+}
+
+/* INPUT FIELDS */
+
+.midnight-auth-field {
+  margin-bottom: 19px;
+}
+
+.midnight-auth-field label {
+  display: block;
+  margin-bottom: 9px;
+  color: #164b55;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.midnight-auth-input {
+  height: 53px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 15px;
+  border: 1px solid #dce9e9;
+  border-radius: 11px;
+  background: #f8fbfb;
+  transition: 0.25s ease;
+}
+
+.midnight-auth-input svg {
+  flex-shrink: 0;
+  color: #087e8b;
+}
+
+.midnight-auth-input:focus-within {
+  border-color: #087e8b;
+  background: white;
+  box-shadow: 0 0 0 4px rgba(8, 126, 139, 0.1);
+}
+
+.midnight-auth-input input {
+  width: 100%;
+  height: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: #073b46;
+  font-size: 13px;
+}
+
+.midnight-auth-input input::placeholder {
+  color: #a0b1b4;
+}
+
+/* ERROR MESSAGE */
+
+.midnight-auth-error {
+  margin: 15px 0;
+  padding: 12px 14px;
+  border: 1px solid #ffd0c8;
+  border-radius: 9px;
+  background: #fff3f0;
+  color: #c0392b;
+  font-size: 13px;
+}
+
+/* SUBMIT BUTTON */
+
+.midnight-auth-submit {
+  width: 100%;
+  min-height: 54px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 25px;
+  border: none;
+  border-radius: 11px;
+  background: linear-gradient(135deg, #087e8b, #07505e);
+  color: white;
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.midnight-auth-submit:hover:not(:disabled) {
+  transform: translateY(-2px);
+  background: linear-gradient(135deg, #f28c45, #e66d29);
+  box-shadow: 0 10px 25px rgba(242, 140, 69, 0.25);
+}
+
+.midnight-auth-submit:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+/* LOGIN LINK */
+
+.midnight-auth-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 28px 0 20px;
+  color: #91a3a6;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+}
+
+.midnight-auth-divider span:first-child,
+.midnight-auth-divider span:last-child {
+  flex: 1;
+  height: 1px;
+  background: #e5eeee;
+}
+
+.midnight-auth-register {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.midnight-auth-register p {
+  margin: 0;
+  color: #71858a;
+  font-size: 13px;
+}
+
+.midnight-auth-register a {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: #087e8b;
+  font-size: 13px;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.midnight-auth-register a:hover {
+  color: #f28c45;
+}
+
+/* BOTTOM SECTION */
+
+.midnight-auth-bottom {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  padding-top: 18px;
+  border-top: 1px solid #edf1f1;
+  color: #9aabad;
+  font-size: 10px;
+}
+
+/* RESPONSIVE DESIGN */
+
+@media (max-width: 900px) {
+  .midnight-auth-page {
+    padding: 20px;
+  }
+
+  .midnight-auth-wrapper {
+    max-width: 600px;
+    grid-template-columns: 1fr;
+  }
+
+  .midnight-auth-visual {
+    min-height: 360px;
+    padding: 30px;
+  }
+
+  .midnight-auth-visual-content h1 {
+    font-size: 39px;
+  }
+
+  .midnight-register-benefits {
+    gap: 10px;
+    margin-top: 20px;
+  }
+
+  .midnight-auth-form-section {
+    padding: 30px;
+  }
+}
+
+@media (max-width: 520px) {
+  .midnight-auth-page {
+    padding: 0;
+  }
+
+  .midnight-auth-wrapper {
+    min-height: 100vh;
+    border-radius: 0;
+  }
+
+  .midnight-auth-visual {
+    min-height: 300px;
+    padding: 25px;
+  }
+
+  .midnight-auth-visual-content h1 {
+    font-size: 34px;
+  }
+
+  .midnight-auth-visual-content > p {
+    font-size: 13px;
+  }
+
+  .midnight-auth-image-credit {
+    display: none;
+  }
+
+  .midnight-auth-form-section {
+    padding: 25px 22px;
+  }
+
+  .midnight-auth-form-top {
+    font-size: 9px;
+  }
+
+  .midnight-auth-form-content h2 {
+    font-size: 33px;
+  }
+
+  .midnight-auth-register {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .midnight-auth-bottom {
+    font-size: 9px;
+  }
+}

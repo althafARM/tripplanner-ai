@@ -1,3 +1,4 @@
+import { useRef, useState } from "react";
 
 import {
   ArrowRight,
@@ -7,105 +8,177 @@ import {
   Mountain,
   Waves,
   Landmark,
+  Play,
+  Pause,
 } from "lucide-react";
 
 import { Link } from "react-router-dom";
+
 import DestinationCard from "../components/DestinationCard";
 import { sampleDestinations } from "../data/destinations";
 
-export default function Home() {
-  return (
-    <>
-      {/* HERO SECTION */}
-      <section className="midnight-hero">
-        <div className="midnight-hero-bg" />
+import "./Home.css";
 
-        <div className="container midnight-hero-content">
-          <span className="midnight-eyebrow">
-            <Sparkles size={16} />
+export default function Home() {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [isPlaying, setIsPlaying] = useState(true);
+
+  const toggleVideo = async () => {
+    if (!videoRef.current) return;
+
+    if (videoRef.current.paused) {
+      try {
+        await videoRef.current.play();
+        setIsPlaying(true);
+      } catch {
+        setIsPlaying(false);
+      }
+    } else {
+      videoRef.current.pause();
+      setIsPlaying(false);
+    }
+  };
+
+  return (
+    <div className="tropical-home">
+
+      {/* HERO SECTION */}
+
+      <section className="tropical-hero">
+
+        <video
+          ref={videoRef}
+          className="tropical-hero-video"
+          autoPlay
+          muted
+          loop
+          playsInline
+          poster="/images/sri-lanka-hero.jpg"
+          onPlay={() => setIsPlaying(true)}
+          onPause={() => setIsPlaying(false)}
+        >
+          <source
+            src="/videos/sri-lanka-hero.mp4"
+            type="video/mp4"
+          />
+        </video>
+
+        <div className="tropical-hero-overlay" />
+
+        <div className="tropical-hero-content container">
+
+          <span className="tropical-eyebrow">
+            <Sparkles size={17} />
             YOUR PERSONAL AI TRAVEL COMPANION
           </span>
 
           <h1>
-            Discover the world.
+            Discover the beauty
             <br />
-            <em>We'll plan the journey.</em>
+            of <span>Sri Lanka.</span>
           </h1>
 
           <p>
-            Tell us what you love. TripPlanner AI helps turn your
-            travel ideas into a thoughtful, personalised itinerary.
+            From golden beaches to misty mountains,
+            discover incredible destinations and let
+            AI create a journey made just for you.
           </p>
 
-          <div className="midnight-hero-actions">
-            <Link to="/planner" className="midnight-primary-button">
-              Plan my trip <ArrowRight size={18} />
+          <div className="tropical-hero-actions">
+
+            <Link
+              to="/planner"
+              className="tropical-primary-button"
+            >
+              Plan My Trip
+              <ArrowRight size={19} />
             </Link>
 
-            <Link to="/explore" className="midnight-outline-button">
-              Explore destinations
+            <Link
+              to="/explore"
+              className="tropical-secondary-button"
+            >
+              Explore Destinations
             </Link>
+
           </div>
 
-          <div className="midnight-hero-note">
+          <div className="tropical-hero-note">
             <span />
-            Start with beautiful places across Sri Lanka
+            Experience the magic of the island
           </div>
+
         </div>
 
-        {/* HERO STATS */}
-        <div className="midnight-hero-stats container">
-          <div className="midnight-stat-item">
-            <span className="midnight-stat-number">01</span>
-            <div>
-              <h3>Share Your Style</h3>
-              <p>Tell us what you love</p>
-            </div>
-          </div>
+        <button
+          type="button"
+          className="tropical-video-control"
+          onClick={toggleVideo}
+          aria-label={isPlaying ? "Pause background video" : "Play background video"}
+        >
+          {isPlaying ? <Pause size={18} /> : <Play size={18} />}
+          {isPlaying ? "Pause video" : "Play video"}
+        </button>
 
-          <div className="midnight-stat-divider" />
-
-          <div className="midnight-stat-item">
-            <span className="midnight-stat-number">02</span>
-            <div>
-              <h3>Get Your Itinerary</h3>
-              <p>AI creates your travel plan</p>
-            </div>
-          </div>
-
-          <div className="midnight-stat-divider" />
-
-          <div className="midnight-stat-item">
-            <span className="midnight-stat-number">03</span>
-            <div>
-              <h3>Enjoy Your Journey</h3>
-              <p>Explore without the stress</p>
-            </div>
-          </div>
+        <div className="tropical-hero-bottom">
+          <span>01 — DISCOVER</span>
+          <span>SRI LANKA · THE PEARL OF THE INDIAN OCEAN</span>
         </div>
+
       </section>
 
+
+      {/* INTRODUCTION */}
+
+      <section className="tropical-intro container">
+
+        <div className="tropical-intro-label">
+          <span />
+          YOUR NEXT ADVENTURE STARTS HERE
+        </div>
+
+        <h2>
+          One island.
+          <br />
+          <span>A thousand experiences.</span>
+        </h2>
+
+        <p>
+          Discover beautiful places, experience local culture
+          and create unforgettable memories with your
+          personal AI travel planner.
+        </p>
+
+      </section>
+
+
       {/* DESTINATIONS */}
-      <section className="midnight-section container">
-        <div className="midnight-section-heading">
+
+      <section className="tropical-destinations container">
+
+        <div className="tropical-section-heading">
+
           <div>
-            <span className="midnight-section-label">
-              FIND YOUR NEXT ESCAPE
-            </span>
+            <span>EXPLORE THE ISLAND</span>
 
             <h2>
-              Places worth <em>discovering.</em>
+              Find your next
+              <em> escape.</em>
             </h2>
 
             <p>
-              From misty hills to sunny coastlines, find a place
-              that feels right.
+              Explore the places that make Sri Lanka special.
             </p>
           </div>
 
-          <Link to="/explore" className="midnight-text-link">
-            Explore all places <ArrowRight size={17} />
+          <Link
+            to="/explore"
+            className="tropical-view-all"
+          >
+            View all destinations
+            <ArrowRight size={18} />
           </Link>
+
         </div>
 
         <div className="destination-grid">
@@ -116,139 +189,168 @@ export default function Home() {
             />
           ))}
         </div>
+
       </section>
 
-      {/* FEATURES */}
-      <section className="midnight-feature-section">
-        <div className="container midnight-feature-layout">
-
-          <div className="midnight-feature-intro">
-            <span className="midnight-feature-label">
-              <Sparkles size={15} />
-              A BETTER WAY TO TRAVEL
-            </span>
-
-            <h2>
-              Your journey.
-              <br />
-              Your interests.
-              <br />
-              <em>Your own adventure.</em>
-            </h2>
-
-            <p>
-              Forget complicated travel planning. Tell us what you love,
-              choose your budget and let TripPlanner AI help create a
-              journey that matches your style.
-            </p>
-
-            <Link to="/planner" className="midnight-feature-button">
-              Try the AI Planner <ArrowRight size={18} />
-            </Link>
-
-            <div className="midnight-feature-note">
-              <ShieldCheck size={17} />
-              Smarter planning for better journeys
-            </div>
-          </div>
-
-          <div className="midnight-feature-cards">
-
-            <div className="midnight-feature-card">
-              <div className="midnight-feature-icon">
-                <Sparkles size={25} />
-              </div>
-
-              <div>
-                <span>01 / PERSONALISATION</span>
-                <h3>Personalised Planning</h3>
-                <p>
-                  Create travel plans based on your interests,
-                  travel dates and budget.
-                </p>
-              </div>
-
-              <ArrowRight className="midnight-feature-arrow" size={20} />
-            </div>
-
-            <div className="midnight-feature-card">
-              <div className="midnight-feature-icon">
-                <Map size={25} />
-              </div>
-
-              <div>
-                <span>02 / DISCOVERY</span>
-                <h3>Discover Amazing Places</h3>
-                <p>
-                  Explore beautiful destinations, nature,
-                  beaches and cultural attractions.
-                </p>
-              </div>
-
-              <ArrowRight className="midnight-feature-arrow" size={20} />
-            </div>
-
-            <div className="midnight-feature-card">
-              <div className="midnight-feature-icon">
-                <ShieldCheck size={25} />
-              </div>
-
-              <div>
-                <span>03 / ASSISTANCE</span>
-                <h3>Your AI Travel Assistant</h3>
-                <p>
-                  Get travel guidance and organise your
-                  journey with an intelligent assistant.
-                </p>
-              </div>
-
-              <ArrowRight className="midnight-feature-arrow" size={20} />
-            </div>
-
-          </div>
-        </div>
-      </section>
 
       {/* TRAVEL EXPERIENCES */}
-      <section className="midnight-section container">
-        <div className="midnight-section-heading">
-          <div>
-            <span className="midnight-section-label">
-              CHOOSE YOUR EXPERIENCE
-            </span>
 
-            <h2>
-              Travel in your <em>own way.</em>
-            </h2>
+      <section className="tropical-experiences">
+
+        <div className="container">
+
+          <div className="tropical-section-heading">
+
+            <div>
+              <span>EXPERIENCE MORE</span>
+
+              <h2>
+                Find the journey
+                <em> you love.</em>
+              </h2>
+            </div>
+
           </div>
+
+          <div className="tropical-experience-grid">
+
+            <div className="tropical-experience-card nature">
+
+              <Mountain size={32} />
+
+              <div>
+                <span>01 / NATURE</span>
+                <h3>Mountain Adventures</h3>
+                <p>
+                  Explore green hills, waterfalls and
+                  breathtaking landscapes.
+                </p>
+              </div>
+
+            </div>
+
+            <div className="tropical-experience-card beach">
+
+              <Waves size={32} />
+
+              <div>
+                <span>02 / BEACH</span>
+                <h3>Tropical Beach Escapes</h3>
+                <p>
+                  Enjoy golden sunshine, beautiful beaches
+                  and ocean adventures.
+                </p>
+              </div>
+
+            </div>
+
+            <div className="tropical-experience-card culture">
+
+              <Landmark size={32} />
+
+              <div>
+                <span>03 / CULTURE</span>
+                <h3>Culture & Heritage</h3>
+                <p>
+                  Discover ancient cities, traditions
+                  and Sri Lankan food.
+                </p>
+              </div>
+
+            </div>
+
+          </div>
+
         </div>
 
-        <div className="midnight-experience-grid">
-          <div className="midnight-experience-card">
-            <Mountain size={32} />
-            <h3>Nature Escapes</h3>
-            <p>
-              Find calm in green hills and scenic trails.
-            </p>
-          </div>
-
-          <div className="midnight-experience-card">
-            <Waves size={32} />
-            <h3>Beach Days</h3>
-            <p>
-              Slow down beside the ocean and sunshine.
-            </p>
-          </div>
-
-          <div className="midnight-experience-card">
-            <Landmark size={32} />
-            <h3>Culture & Heritage</h3>
-            <p>
-              Discover local stories, food and history.
-            </p>
-          </div>
-        </div>
       </section>
-    </>
+
+
+      {/* AI TRAVEL PLANNER FEATURE */}
+
+      <section className="tropical-ai-section container">
+
+        <div className="tropical-ai-content">
+
+          <span>
+            <Sparkles size={17} />
+            TRAVEL SMARTER WITH AI
+          </span>
+
+          <h2>
+            Your dream trip.
+            <br />
+            <em>Planned intelligently.</em>
+          </h2>
+
+          <p>
+            Choose your destination, travel dates, budget
+            and interests. TripPlanner AI creates a
+            personalised itinerary and estimates your
+            travel expenses.
+          </p>
+
+          <Link
+            to="/planner"
+            className="tropical-primary-button"
+          >
+            Start Planning
+            <ArrowRight size={19} />
+          </Link>
+
+        </div>
+
+        <div className="tropical-ai-benefits">
+
+          <div>
+            <Sparkles size={24} />
+            <h3>AI Personalisation</h3>
+            <p>Travel plans based on your interests.</p>
+          </div>
+
+          <div>
+            <Map size={24} />
+            <h3>Destination Discovery</h3>
+            <p>Find amazing places across Sri Lanka.</p>
+          </div>
+
+          <div>
+            <ShieldCheck size={24} />
+            <h3>Smart Cost Estimation</h3>
+            <p>Understand your estimated travel expenses.</p>
+          </div>
+
+        </div>
+
+      </section>
+
+
+      {/* FINAL CALL TO ACTION */}
+
+      <section className="tropical-final-cta">
+
+        <div className="container">
+
+          <span>YOUR SRI LANKAN ADVENTURE AWAITS</span>
+
+          <h2>
+            Don't just dream about it.
+            <br />
+            <em>Experience it.</em>
+          </h2>
+
+          <Link
+            to="/planner"
+            className="tropical-primary-button"
+          >
+            Create My Journey
+            <ArrowRight size={19} />
+          </Link>
+
+        </div>
+
+      </section>
+
+    </div>
   );
 }

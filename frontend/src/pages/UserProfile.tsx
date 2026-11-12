@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import {
   User,
@@ -9,8 +8,10 @@ import {
   Compass,
   ArrowLeft,
 } from "lucide-react";
+
 import { Link } from "react-router-dom";
 import { getUserProfile } from "../services/authService";
+import "./UserProfile.css";
 
 interface UserProfileData {
   id: number;
@@ -45,22 +46,25 @@ export default function UserProfile() {
 
   if (loading) {
     return (
-      <div className="midnight-profile-loading">
-        <Loader2 size={38} className="midnight-profile-spinner" />
-        <h3>Loading your profile</h3>
-        <p>Please wait while we retrieve your account information.</p>
+      <div className="tropical-profile-loading">
+        <Loader2 size={38} className="tropical-profile-spinner" />
+        <h3>Loading your profile...</h3>
+        <p>Preparing your personal travel space.</p>
       </div>
     );
   }
 
   if (error || !profile) {
     return (
-      <div className="midnight-profile-error-page">
-        <div className="midnight-profile-error-card">
+      <div className="tropical-profile-error-page">
+        <div className="tropical-profile-error-card">
           <ShieldCheck size={38} />
+
           <h2>Profile unavailable</h2>
+
           <p>{error || "Profile information not available."}</p>
-          <Link to="/home" className="midnight-profile-back-button">
+
+          <Link to="/home" className="tropical-profile-back-button">
             <ArrowLeft size={17} />
             Back to Home
           </Link>
@@ -86,135 +90,204 @@ export default function UserProfile() {
     .toUpperCase();
 
   return (
-    <div className="midnight-profile-page">
-      <div className="midnight-profile-container">
+    <div className="tropical-profile-page">
 
-        {/* Page Heading */}
-        <div className="midnight-profile-heading">
-          <span className="midnight-profile-eyebrow">
-            YOUR PERSONAL SPACE
+      {/* BACKGROUND VIDEO */}
+
+      <video
+        className="tropical-profile-video"
+        autoPlay
+        muted
+        loop
+        playsInline
+        poster="/images/sri-lanka-hero.jpg"
+      >
+        <source
+          src="/videos/sri-lanka-hero.mp4"
+          type="video/mp4"
+        />
+      </video>
+
+      {/* VIDEO OVERLAY */}
+
+      <div className="tropical-profile-overlay" />
+
+      {/* PROFILE CONTENT */}
+
+      <div className="tropical-profile-container">
+
+        {/* HEADING */}
+
+        <div className="tropical-profile-heading">
+
+          <span className="tropical-profile-eyebrow">
+            <Compass size={16} />
+            YOUR PERSONAL TRAVEL SPACE
           </span>
 
           <h1>
-            My <span>Profile.</span>
+            Welcome to Your
+            <br />
+            <span>Travel Profile.</span>
           </h1>
 
           <p>
-            View your personal information and account details.
+            Your journey, your memories and your adventures
+            all begin here.
           </p>
+
         </div>
 
-        {/* Profile Overview */}
-        <div className="midnight-profile-layout">
+        {/* PROFILE CARD */}
 
-          <div className="midnight-profile-sidebar">
-            <div className="midnight-profile-avatar">
+        <div className="tropical-profile-card">
+
+          {/* PROFILE SIDEBAR */}
+
+          <div className="tropical-profile-sidebar">
+
+            <div className="tropical-profile-avatar">
               {initials || <User size={45} />}
             </div>
 
+            <span className="tropical-profile-member-label">
+              TRAVEL MEMBER
+            </span>
+
             <h2>{profile.name}</h2>
 
-            <p className="midnight-profile-email">
-              <Mail size={15} />
+            <p className="tropical-profile-email">
+              <Mail size={16} />
               {profile.email}
             </p>
 
-            <div className="midnight-profile-member-badge">
-              <ShieldCheck size={16} />
+            <div className="tropical-profile-member-badge">
+              <ShieldCheck size={17} />
               Registered User
             </div>
 
-            <div className="midnight-profile-sidebar-divider" />
+            <div className="tropical-profile-sidebar-divider" />
 
-            <div className="midnight-profile-sidebar-note">
-              <Compass size={21} />
+            <div className="tropical-profile-sidebar-note">
+              <Compass size={25} />
+
               <p>
-                Your next adventure is just a plan away.
+                Explore beautiful destinations.
+                Create unforgettable memories.
+                Travel smarter.
               </p>
             </div>
+
           </div>
 
-          {/* Account Information */}
-          <div className="midnight-profile-details">
+          {/* ACCOUNT DETAILS */}
 
-            <div className="midnight-profile-details-heading">
+          <div className="tropical-profile-details">
+
+            <div className="tropical-profile-details-heading">
+
               <div>
-                <span>ACCOUNT INFORMATION</span>
-                <h2>Personal Details</h2>
+                <span>YOUR ACCOUNT</span>
+                <h2>Personal Information</h2>
               </div>
 
-              <div className="midnight-profile-status">
+              <div className="tropical-profile-status">
                 <span />
                 Account Active
               </div>
+
             </div>
 
-            <div className="midnight-profile-info-grid">
+            {/* INFORMATION CARDS */}
 
-              <div className="midnight-profile-info-card">
-                <div className="midnight-profile-info-icon">
-                  <User size={21} />
+            <div className="tropical-profile-info-grid">
+
+              <div className="tropical-profile-info-card">
+
+                <div className="tropical-profile-info-icon">
+                  <User size={22} />
                 </div>
 
                 <div>
                   <span>FULL NAME</span>
                   <h3>{profile.name}</h3>
                 </div>
+
               </div>
 
-              <div className="midnight-profile-info-card">
-                <div className="midnight-profile-info-icon">
-                  <Mail size={21} />
+              <div className="tropical-profile-info-card">
+
+                <div className="tropical-profile-info-icon">
+                  <Mail size={22} />
                 </div>
 
                 <div>
                   <span>EMAIL ADDRESS</span>
                   <h3>{profile.email}</h3>
                 </div>
+
               </div>
 
-              <div className="midnight-profile-info-card">
-                <div className="midnight-profile-info-icon">
-                  <Calendar size={21} />
+              <div className="tropical-profile-info-card">
+
+                <div className="tropical-profile-info-icon">
+                  <Calendar size={22} />
                 </div>
 
                 <div>
-                  <span>ACCOUNT CREATED</span>
+                  <span>MEMBER SINCE</span>
                   <h3>{formattedDate}</h3>
                 </div>
+
               </div>
 
-              <div className="midnight-profile-info-card">
-                <div className="midnight-profile-info-icon">
-                  <ShieldCheck size={21} />
+              <div className="tropical-profile-info-card">
+
+                <div className="tropical-profile-info-icon">
+                  <ShieldCheck size={22} />
                 </div>
 
                 <div>
                   <span>USER ID</span>
                   <h3>#{profile.id}</h3>
                 </div>
+
               </div>
 
             </div>
 
-            <div className="midnight-profile-bottom-note">
-              <ShieldCheck size={18} />
+            {/* SECURITY NOTE */}
+
+            <div className="tropical-profile-bottom-note">
+              <ShieldCheck size={20} />
+
               <p>
                 Your account information is securely displayed
                 in your personal travel space.
               </p>
             </div>
 
+            {/* BACK BUTTON */}
+
             <Link
               to="/home"
-              className="midnight-profile-home-button"
+              className="tropical-profile-home-button"
             >
-              <ArrowLeft size={17} />
+              <ArrowLeft size={18} />
               Back to Home
             </Link>
 
           </div>
+
         </div>
+
+        {/* FOOTER MESSAGE */}
+
+        <div className="tropical-profile-footer-note">
+          <Compass size={17} />
+          DISCOVER SRI LANKA · TRAVEL BEYOND EXPECTATIONS
+        </div>
+
       </div>
     </div>
   );

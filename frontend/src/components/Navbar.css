@@ -1,0 +1,311 @@
+/* =====================================
+   TROPICAL NAVBAR
+===================================== */
+
+.tropical-navbar {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.97);
+  border-bottom: 1px solid #e5eee9;
+  box-shadow: 0 5px 25px rgba(6, 75, 80, 0.06);
+  backdrop-filter: blur(15px);
+}
+
+.tropical-nav-container {
+  width: min(1350px, 94%);
+  min-height: 82px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 25px;
+}
+
+/* BRAND */
+
+.tropical-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+
+.tropical-brand-icon {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #078c91, #064b50);
+  color: white;
+  box-shadow: 0 6px 16px rgba(7, 140, 145, 0.2);
+}
+
+.tropical-brand-sparkle {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 19px;
+  height: 19px;
+  border: 2px solid white;
+  border-radius: 50%;
+  background: #ff8057;
+  color: white;
+}
+
+.tropical-brand-text {
+  color: #064b50;
+  font-size: 21px;
+  font-weight: 900;
+  letter-spacing: -0.7px;
+  white-space: nowrap;
+}
+
+.tropical-brand-text > span {
+  color: #ff8057;
+}
+
+.tropical-brand-text small {
+  display: block;
+  margin-top: 4px;
+  color: #84958d;
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 1.6px;
+}
+
+/* NAVIGATION LINKS */
+
+.tropical-nav-links {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.tropical-nav-link {
+  position: relative;
+  padding: 12px 13px;
+  color: #647b73;
+  font-size: 12px;
+  font-weight: 750;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color 0.25s ease;
+}
+
+.tropical-nav-link::after {
+  position: absolute;
+  right: 13px;
+  bottom: 4px;
+  left: 13px;
+  height: 3px;
+  border-radius: 5px;
+  background: #ff8057;
+  content: "";
+  transform: scaleX(0);
+  transition: transform 0.25s ease;
+}
+
+.tropical-nav-link:hover,
+.tropical-nav-link.active {
+  color: #078c91;
+}
+
+.tropical-nav-link.active::after {
+  transform: scaleX(1);
+}
+
+/* PROFILE BUTTON */
+
+.tropical-profile-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: 8px;
+  padding: 11px 14px;
+  border: 1px solid #dceae3;
+  border-radius: 8px;
+  color: #064b50;
+  background: white;
+  font-size: 12px;
+  font-weight: 750;
+  text-decoration: none;
+  transition: 0.25s ease;
+}
+
+.tropical-profile-button:hover {
+  border-color: #078c91;
+  color: #078c91;
+  background: #f0faf7;
+}
+
+/* PLAN BUTTON */
+
+.tropical-plan-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 13px 16px;
+  border-radius: 8px;
+  background: #ff8057;
+  color: white;
+  font-size: 12px;
+  font-weight: 800;
+  text-decoration: none;
+  white-space: nowrap;
+  box-shadow: 0 5px 14px rgba(255, 128, 87, 0.18);
+  transition: 0.3s ease;
+}
+
+.tropical-plan-button:hover {
+  background: #e96943;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(255, 128, 87, 0.25);
+}
+
+/* LOGOUT BUTTON */
+
+.tropical-logout-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 11px 12px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: #dc6c55;
+  font-size: 12px;
+  font-weight: 750;
+  cursor: pointer;
+  transition: 0.25s ease;
+}
+
+.tropical-logout-button:hover {
+  background: #fff0eb;
+  color: #c94d36;
+}
+
+/* MOBILE MENU BUTTON */
+
+.tropical-mobile-toggle {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 43px;
+  height: 43px;
+  border: 1px solid #dceae3;
+  border-radius: 9px;
+  background: white;
+  color: #064b50;
+  cursor: pointer;
+}
+
+/* TABLET */
+
+@media (max-width: 1100px) {
+  .tropical-nav-container {
+    width: 96%;
+    gap: 10px;
+  }
+
+  .tropical-nav-link {
+    padding: 11px 9px;
+    font-size: 11px;
+  }
+
+  .tropical-nav-links {
+    gap: 2px;
+  }
+
+  .tropical-plan-button {
+    padding: 12px;
+  }
+}
+
+/* MOBILE */
+
+@media (max-width: 850px) {
+  .tropical-nav-container {
+    min-height: 74px;
+  }
+
+  .tropical-mobile-toggle {
+    display: flex;
+  }
+
+  .tropical-nav-links {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    left: 0;
+    display: none;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    padding: 20px 5% 25px;
+    border-top: 1px solid #e5eee9;
+    background: white;
+    box-shadow: 0 15px 25px rgba(6, 75, 80, 0.1);
+  }
+
+  .tropical-nav-links.open {
+    display: flex;
+  }
+
+  .tropical-nav-link {
+    padding: 14px 12px;
+    border-radius: 7px;
+    font-size: 14px;
+  }
+
+  .tropical-nav-link::after {
+    display: none;
+  }
+
+  .tropical-nav-link.active {
+    background: #eaf7f3;
+    color: #078c91;
+  }
+
+  .tropical-profile-button {
+    justify-content: center;
+    margin: 5px 0 0;
+    padding: 13px;
+  }
+
+  .tropical-plan-button {
+    justify-content: center;
+    padding: 14px;
+  }
+
+  .tropical-logout-button {
+    justify-content: center;
+    padding: 13px;
+  }
+}
+
+/* SMALL MOBILE */
+
+@media (max-width: 400px) {
+  .tropical-brand-text {
+    font-size: 18px;
+  }
+
+  .tropical-brand-icon {
+    width: 42px;
+    height: 42px;
+  }
+
+  .tropical-brand-text small {
+    font-size: 7px;
+  }
+}

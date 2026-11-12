@@ -1,3 +1,4 @@
+import"./WeatherCard.css";
 import { useEffect, useState } from "react";
 import {
   Cloud,

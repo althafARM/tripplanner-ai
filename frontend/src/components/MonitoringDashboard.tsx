@@ -1,3 +1,4 @@
+import "./MonitoringDashboard.css";
 import { useEffect, useState } from "react";
 import {
   Activity,

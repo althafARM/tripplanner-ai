@@ -1,0 +1,543 @@
+/* =========================================
+   TROPICAL SRI LANKA - USER PROFILE
+   Full-screen video background
+   Ocean Blue & Sunset Orange
+========================================= */
+
+.tropical-profile-page {
+  position: relative;
+  min-height: 100vh;
+  overflow: hidden;
+  padding: 75px 24px 45px;
+  background: #063b49;
+  isolation: isolate;
+}
+
+/* BACKGROUND VIDEO */
+
+.tropical-profile-video {
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* DARK VIDEO OVERLAY */
+
+.tropical-profile-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background:
+    linear-gradient(
+      115deg,
+      rgba(3, 37, 49, 0.91),
+      rgba(4, 91, 105, 0.76),
+      rgba(3, 43, 55, 0.88)
+    );
+}
+
+/* MAIN CONTAINER */
+
+.tropical-profile-container {
+  position: relative;
+  z-index: 1;
+  width: min(1150px, 100%);
+  margin: 0 auto;
+}
+
+/* PAGE HEADING */
+
+.tropical-profile-heading {
+  margin-bottom: 35px;
+  color: white;
+}
+
+.tropical-profile-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  color: #ffb477;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  margin-bottom: 18px;
+}
+
+.tropical-profile-heading h1 {
+  font-size: clamp(38px, 5vw, 58px);
+  line-height: 1.12;
+  letter-spacing: -1.8px;
+  margin: 0;
+  font-weight: 850;
+}
+
+.tropical-profile-heading h1 span {
+  color: #ffad70;
+}
+
+.tropical-profile-heading > p {
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 15px;
+  line-height: 1.8;
+  margin-top: 17px;
+  max-width: 520px;
+}
+
+/* MAIN GLASS CARD */
+
+.tropical-profile-card {
+  display: grid;
+  grid-template-columns: 0.8fr 1.5fr;
+  overflow: hidden;
+  border-radius: 25px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow:
+    0 25px 75px rgba(0, 20, 30, 0.3),
+    0 5px 20px rgba(0, 0, 0, 0.12);
+  backdrop-filter: blur(18px);
+}
+
+/* PROFILE SIDEBAR */
+
+.tropical-profile-sidebar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 30px;
+  text-align: center;
+  color: white;
+  background:
+    linear-gradient(
+      150deg,
+      rgba(5, 85, 100, 0.98),
+      rgba(3, 53, 68, 0.99)
+    );
+  position: relative;
+}
+
+.tropical-profile-sidebar::before {
+  content: "";
+  position: absolute;
+  width: 250px;
+  height: 250px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  top: -125px;
+  right: -125px;
+}
+
+/* AVATAR */
+
+.tropical-profile-avatar {
+  width: 125px;
+  height: 125px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ffbd83, #ef8141);
+  color: #073f50;
+  font-size: 42px;
+  font-weight: 850;
+  border: 5px solid rgba(255, 255, 255, 0.85);
+  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.2);
+  margin-bottom: 23px;
+}
+
+.tropical-profile-member-label {
+  color: #ffb477;
+  font-size: 10px;
+  font-weight: 850;
+  letter-spacing: 2px;
+  margin-bottom: 10px;
+}
+
+.tropical-profile-sidebar h2 {
+  color: white;
+  font-size: 25px;
+  font-weight: 800;
+  margin: 0 0 12px;
+  overflow-wrap: anywhere;
+}
+
+.tropical-profile-email {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 13px;
+  overflow-wrap: anywhere;
+  max-width: 100%;
+}
+
+.tropical-profile-email svg {
+  color: #ffb477;
+  flex-shrink: 0;
+}
+
+/* MEMBER BADGE */
+
+.tropical-profile-member-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  margin-top: 17px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 30px;
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffe0c4;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.tropical-profile-member-badge svg {
+  color: #ffb477;
+}
+
+/* SIDEBAR DIVIDER */
+
+.tropical-profile-sidebar-divider {
+  width: 75%;
+  height: 1px;
+  margin: 30px 0;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* SIDEBAR NOTE */
+
+.tropical-profile-sidebar-note {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 240px;
+  color: #ffb477;
+}
+
+.tropical-profile-sidebar-note p {
+  color: rgba(255, 255, 255, 0.76);
+  font-size: 13px;
+  line-height: 1.8;
+  margin: 0;
+}
+
+/* ACCOUNT DETAILS */
+
+.tropical-profile-details {
+  padding: 45px;
+  background: rgba(255, 255, 255, 0.97);
+}
+
+.tropical-profile-details-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  margin-bottom: 35px;
+}
+
+.tropical-profile-details-heading > div:first-child > span {
+  color: #e77d3e;
+  font-size: 10px;
+  font-weight: 850;
+  letter-spacing: 2px;
+}
+
+.tropical-profile-details-heading h2 {
+  color: #07505e;
+  font-size: 27px;
+  margin: 8px 0 0;
+}
+
+/* ACTIVE STATUS */
+
+.tropical-profile-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 13px;
+  border-radius: 30px;
+  background: #e8f7ef;
+  color: #218653;
+  font-size: 11px;
+  font-weight: 750;
+  white-space: nowrap;
+}
+
+.tropical-profile-status span {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #2eb872;
+  box-shadow: 0 0 0 4px rgba(46, 184, 114, 0.13);
+}
+
+/* INFORMATION GRID */
+
+.tropical-profile-info-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 17px;
+}
+
+/* INFORMATION CARD */
+
+.tropical-profile-info-card {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  min-width: 0;
+  padding: 21px 17px;
+  border-radius: 15px;
+  border: 1px solid #e2eeee;
+  background: #f5fafa;
+  transition: 0.25s ease;
+}
+
+.tropical-profile-info-card:hover {
+  transform: translateY(-4px);
+  border-color: #8ccbc9;
+  background: #edfaf9;
+  box-shadow: 0 10px 25px rgba(7, 126, 139, 0.09);
+}
+
+.tropical-profile-info-icon {
+  width: 47px;
+  height: 47px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 13px;
+  background: #dff3f1;
+  color: #087e8b;
+}
+
+.tropical-profile-info-card span {
+  display: block;
+  color: #8a9b9e;
+  font-size: 9px;
+  font-weight: 850;
+  letter-spacing: 1.2px;
+  margin-bottom: 7px;
+}
+
+.tropical-profile-info-card h3 {
+  color: #07505e;
+  font-size: 14px;
+  font-weight: 750;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+/* SECURITY NOTE */
+
+.tropical-profile-bottom-note {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  margin-top: 28px;
+  border-radius: 12px;
+  background: #fff5ed;
+  color: #e77d3e;
+}
+
+.tropical-profile-bottom-note svg {
+  flex-shrink: 0;
+}
+
+.tropical-profile-bottom-note p {
+  color: #856d5c;
+  font-size: 12px;
+  line-height: 1.7;
+  margin: 0;
+}
+
+/* HOME BUTTON */
+
+.tropical-profile-home-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  margin-top: 25px;
+  padding: 13px 21px;
+  border-radius: 11px;
+  background: #f28c45;
+  color: white;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 800;
+  transition: 0.25s ease;
+}
+
+.tropical-profile-home-button:hover {
+  background: #df7130;
+  transform: translateY(-3px);
+  box-shadow: 0 9px 22px rgba(242, 140, 69, 0.25);
+}
+
+/* FOOTER NOTE */
+
+.tropical-profile-footer-note {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 9px;
+  margin-top: 32px;
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 11px;
+  font-weight: 750;
+  letter-spacing: 1.5px;
+  text-align: center;
+}
+
+/* LOADING */
+
+.tropical-profile-loading {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background: #07505e;
+  color: white;
+  padding: 25px;
+}
+
+.tropical-profile-spinner {
+  color: #ffad70;
+  animation: tropical-profile-spin 1s linear infinite;
+}
+
+@keyframes tropical-profile-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.tropical-profile-loading h3 {
+  margin: 20px 0 8px;
+}
+
+.tropical-profile-loading p {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* ERROR PAGE */
+
+.tropical-profile-error-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 25px;
+  background: #07505e;
+}
+
+.tropical-profile-error-card {
+  width: min(450px, 100%);
+  padding: 40px;
+  border-radius: 20px;
+  background: white;
+  text-align: center;
+  color: #07505e;
+}
+
+.tropical-profile-error-card > svg {
+  color: #f28c45;
+}
+
+.tropical-profile-error-card p {
+  color: #71858b;
+  line-height: 1.7;
+}
+
+.tropical-profile-back-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 18px;
+  margin-top: 15px;
+  border-radius: 10px;
+  background: #f28c45;
+  color: white;
+  text-decoration: none;
+  font-weight: 750;
+}
+
+/* RESPONSIVE DESIGN */
+
+@media (max-width: 850px) {
+  .tropical-profile-card {
+    grid-template-columns: 1fr;
+  }
+
+  .tropical-profile-sidebar {
+    padding: 38px 25px;
+  }
+
+  .tropical-profile-sidebar-divider {
+    margin: 22px 0;
+  }
+
+  .tropical-profile-details {
+    padding: 32px;
+  }
+}
+
+@media (max-width: 600px) {
+  .tropical-profile-page {
+    padding: 55px 16px 30px;
+  }
+
+  .tropical-profile-heading h1 {
+    font-size: 39px;
+  }
+
+  .tropical-profile-details {
+    padding: 23px 18px;
+  }
+
+  .tropical-profile-details-heading {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .tropical-profile-details-heading h2 {
+    font-size: 23px;
+  }
+
+  .tropical-profile-info-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .tropical-profile-info-card {
+    padding: 17px;
+  }
+
+  .tropical-profile-footer-note {
+    font-size: 9px;
+    letter-spacing: 1px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tropical-profile-info-card,
+  .tropical-profile-home-button {
+    transition: none;
+  }
+
+  .tropical-profile-spinner {
+    animation: none;
+  }
+}

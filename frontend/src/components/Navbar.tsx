@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link, NavLink } from "react-router-dom";
+
 import {
   Compass,
   Menu,
@@ -7,13 +8,17 @@ import {
   UserRound,
   LogOut,
   ArrowUpRight,
+  Sparkles,
 } from "lucide-react";
 
 import { logoutUser } from "../services/authService";
 
+import "./Navbar.css";
+
 const links = [
   { to: "/home", label: "Home" },
   { to: "/explore", label: "Explore" },
+  { to: "/planner", label: "Plan a Trip" },
   { to: "/my-trips", label: "My Trips" },
   { to: "/chat", label: "AI Assistant" },
 ];
@@ -24,30 +29,37 @@ export default function Navbar() {
   const closeMenu = () => setOpen(false);
 
   return (
-    <header className="lux-navbar">
+    <header className="tropical-navbar">
 
-      <div className="lux-nav-container">
+      <div className="tropical-nav-container">
 
         {/* BRAND */}
+
         <Link
           to="/home"
-          className="lux-brand"
+          className="tropical-brand"
           onClick={closeMenu}
         >
-          <span className="lux-brand-icon">
-            <Compass size={25} />
+          <span className="tropical-brand-icon">
+            <Compass size={27} />
+            <span className="tropical-brand-sparkle">
+              <Sparkles size={12} />
+            </span>
           </span>
 
-          <span className="lux-brand-text">
+          <span className="tropical-brand-text">
             TripPlanner
             <span> AI</span>
-            <small>TRAVEL INTELLIGENTLY</small>
+            <small>EXPLORE • DISCOVER • EXPERIENCE</small>
           </span>
         </Link>
 
-        {/* MOBILE MENU */}
+
+        {/* MOBILE MENU BUTTON */}
+
         <button
-          className="lux-mobile-toggle"
+          type="button"
+          className="tropical-mobile-toggle"
           onClick={() => setOpen(!open)}
           aria-label="Toggle navigation"
           aria-expanded={open}
@@ -55,8 +67,16 @@ export default function Navbar() {
           {open ? <X size={25} /> : <Menu size={25} />}
         </button>
 
+
         {/* NAVIGATION */}
-        <nav className={open ? "lux-nav-links open" : "lux-nav-links"}>
+
+        <nav
+          className={
+            open
+              ? "tropical-nav-links open"
+              : "tropical-nav-links"
+          }
+        >
 
           {links.map((link) => (
             <NavLink
@@ -65,36 +85,45 @@ export default function Navbar() {
               end={link.to === "/home"}
               onClick={closeMenu}
               className={({ isActive }) =>
-                isActive ? "lux-nav-link active" : "lux-nav-link"
+                isActive
+                  ? "tropical-nav-link active"
+                  : "tropical-nav-link"
               }
             >
               {link.label}
             </NavLink>
           ))}
 
+
           {/* PROFILE */}
+
           <Link
             to="/profile"
-            className="lux-profile-button"
+            className="tropical-profile-button"
             onClick={closeMenu}
           >
             <UserRound size={17} />
             <span>Profile</span>
           </Link>
 
+
           {/* PLAN A TRIP */}
+
           <Link
             to="/planner"
-            className="lux-plan-button"
+            className="tropical-plan-button"
             onClick={closeMenu}
           >
             Plan a Trip
             <ArrowUpRight size={17} />
           </Link>
 
+
           {/* LOGOUT */}
+
           <button
-            className="lux-logout-button"
+            type="button"
+            className="tropical-logout-button"
             onClick={() => {
               closeMenu();
               logoutUser();

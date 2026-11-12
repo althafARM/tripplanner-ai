@@ -1,0 +1,651 @@
+/* =========================================
+   TROPICAL SRI LANKA - HOME PAGE
+========================================= */
+
+.tropical-home {
+  background: #fffaf2;
+  color: #123b40;
+  overflow: hidden;
+  font-family: inherit;
+}
+
+.tropical-home .container {
+  width: min(1200px, 90%);
+  margin: 0 auto;
+}
+
+/* HERO */
+
+.tropical-hero {
+  position: relative;
+  min-height: 690px;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  background: #063e48;
+  color: white;
+}
+
+.tropical-hero-video,
+.tropical-hero-overlay {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.tropical-hero-video {
+  object-fit: cover;
+}
+
+.tropical-hero-overlay {
+  background:
+    linear-gradient(
+      90deg,
+      rgba(3, 37, 44, 0.88),
+      rgba(3, 37, 44, 0.55),
+      rgba(3, 37, 44, 0.12)
+    ),
+    linear-gradient(
+      0deg,
+      rgba(3, 37, 44, 0.55),
+      transparent 40%
+    );
+}
+
+.tropical-hero-content {
+  position: relative;
+  z-index: 2;
+  padding-top: 90px;
+  padding-bottom: 120px;
+}
+
+.tropical-eyebrow,
+.tropical-ai-content > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: #ffb38f;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 2px;
+}
+
+.tropical-hero h1 {
+  margin: 28px 0;
+  font-size: clamp(48px, 7vw, 86px);
+  line-height: 1.08;
+  font-weight: 800;
+  letter-spacing: -3px;
+  color: #fffaf2;
+}
+
+.tropical-hero h1 span {
+  color: #ff936b;
+}
+
+.tropical-hero-content > p {
+  max-width: 560px;
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 17px;
+  line-height: 1.9;
+}
+
+.tropical-hero-actions {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-top: 35px;
+}
+
+.tropical-primary-button,
+.tropical-secondary-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  min-height: 54px;
+  padding: 0 26px;
+  border-radius: 9px;
+  font-weight: 800;
+  text-decoration: none;
+  transition: 0.3s ease;
+}
+
+.tropical-primary-button {
+  background: #ff8057;
+  color: white;
+  box-shadow: 0 10px 30px rgba(255, 128, 87, 0.25);
+}
+
+.tropical-primary-button:hover {
+  background: #ed6841;
+  transform: translateY(-3px);
+  box-shadow: 0 15px 35px rgba(255, 128, 87, 0.35);
+}
+
+.tropical-secondary-button {
+  border: 1px solid rgba(255, 255, 255, 0.65);
+  color: white;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(10px);
+}
+
+.tropical-secondary-button:hover {
+  background: white;
+  color: #064b50;
+}
+
+.tropical-hero-note {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 38px;
+  color: #e4e9e5;
+  font-size: 13px;
+}
+
+.tropical-hero-note span,
+.tropical-intro-label span {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #ff936b;
+}
+
+.tropical-video-control {
+  position: absolute;
+  right: 5%;
+  bottom: 85px;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 17px;
+  border: 1px solid rgba(255,255,255,0.5);
+  border-radius: 30px;
+  color: white;
+  background: rgba(0,0,0,0.25);
+  backdrop-filter: blur(10px);
+  cursor: pointer;
+}
+
+.tropical-hero-bottom {
+  position: absolute;
+  bottom: 25px;
+  left: 5%;
+  right: 5%;
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+  color: rgba(255,255,255,0.8);
+  font-size: 10px;
+  letter-spacing: 2px;
+}
+
+/* INTRO */
+
+.tropical-intro {
+  padding-top: 105px;
+  padding-bottom: 65px;
+  text-align: center;
+}
+
+.tropical-intro-label {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  color: #ef7953;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 2px;
+}
+
+.tropical-intro h2 {
+  margin: 25px 0 15px;
+  font-size: clamp(36px, 5vw, 58px);
+  line-height: 1.2;
+  color: #064b50;
+}
+
+.tropical-intro h2 span {
+  color: #ef7953;
+}
+
+.tropical-intro p {
+  max-width: 650px;
+  margin: auto;
+  color: #687c78;
+  font-size: 16px;
+  line-height: 1.8;
+}
+
+/* SECTION HEADINGS */
+
+.tropical-destinations {
+  padding-top: 55px;
+  padding-bottom: 100px;
+}
+
+.tropical-section-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 25px;
+  margin-bottom: 38px;
+}
+
+.tropical-section-heading > div > span {
+  color: #ef7953;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 2px;
+}
+
+.tropical-section-heading h2 {
+  margin: 13px 0;
+  color: #064b50;
+  font-size: clamp(32px, 4vw, 46px);
+}
+
+.tropical-section-heading h2 em {
+  color: #ef7953;
+  font-style: normal;
+}
+
+.tropical-section-heading p {
+  color: #73837f;
+}
+
+.tropical-view-all {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #087e8b;
+  text-decoration: none;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.tropical-view-all:hover {
+  color: #ef7953;
+}
+
+/* DESTINATION CARD SUPPORT */
+
+.tropical-destinations .destination-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 25px;
+}
+
+/* EXPERIENCES */
+
+.tropical-experiences {
+  padding: 100px 0;
+  background: #edf5f1;
+}
+
+.tropical-experience-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.tropical-experience-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 280px;
+  padding: 30px;
+  border-radius: 18px;
+  color: white;
+  background: #087e8b;
+  overflow: hidden;
+  transition: 0.3s ease;
+}
+
+.tropical-experience-card:hover {
+  transform: translateY(-8px);
+}
+
+.tropical-experience-card > svg {
+  color: #ffb38f;
+}
+
+.tropical-experience-card span {
+  color: #ffd0ba;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 2px;
+}
+
+.tropical-experience-card h3 {
+  margin: 12px 0;
+  font-size: 23px;
+}
+
+.tropical-experience-card p {
+  color: rgba(255,255,255,0.8);
+  line-height: 1.7;
+}
+
+.tropical-experience-card.nature {
+  background: linear-gradient(145deg, #145e51, #368b68);
+}
+
+.tropical-experience-card.beach {
+  background: linear-gradient(145deg, #087e8b, #21a5ac);
+}
+
+.tropical-experience-card.culture {
+  background: linear-gradient(145deg, #b65d43, #ef9361);
+}
+
+/* AI SECTION */
+
+.tropical-ai-section {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 70px;
+  align-items: center;
+  padding-top: 110px;
+  padding-bottom: 110px;
+}
+
+.tropical-ai-content h2 {
+  margin: 25px 0;
+  color: #064b50;
+  font-size: clamp(38px, 5vw, 56px);
+  line-height: 1.2;
+}
+
+.tropical-ai-content h2 em {
+  color: #ef7953;
+  font-style: normal;
+}
+
+.tropical-ai-content > p {
+  max-width: 550px;
+  margin-bottom: 30px;
+  color: #71827d;
+  line-height: 1.9;
+}
+
+.tropical-ai-benefits {
+  display: grid;
+  gap: 20px;
+}
+
+.tropical-ai-benefits > div {
+  padding: 25px;
+  border: 1px solid #e3ebe5;
+  border-radius: 14px;
+  background: white;
+  box-shadow: 0 8px 30px rgba(6,75,80,0.05);
+  transition: 0.3s ease;
+}
+
+.tropical-ai-benefits > div:hover {
+  transform: translateX(7px);
+  border-color: #ff936b;
+}
+
+.tropical-ai-benefits svg {
+  color: #ef7953;
+}
+
+.tropical-ai-benefits h3 {
+  margin: 12px 0 6px;
+  color: #064b50;
+}
+
+.tropical-ai-benefits p {
+  color: #71827d;
+  font-size: 14px;
+}
+
+/* FINAL CTA */
+
+.tropical-final-cta {
+  padding: 100px 0;
+  text-align: center;
+  color: white;
+  background:
+    linear-gradient(
+      110deg,
+      rgba(4, 63, 68, 0.96),
+      rgba(8, 126, 139, 0.94)
+    );
+}
+
+.tropical-final-cta span {
+  color: #ffc1a4;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 2px;
+}
+
+.tropical-final-cta h2 {
+  margin: 25px 0 35px;
+  font-size: clamp(36px, 5vw, 58px);
+  line-height: 1.2;
+}
+
+.tropical-final-cta h2 em {
+  color: #ffb08e;
+  font-style: normal;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 900px) {
+  .tropical-destinations .destination-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .tropical-experience-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .tropical-ai-section {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+}
+
+@media (max-width: 600px) {
+  .tropical-hero {
+    min-height: 650px;
+  }
+
+  .tropical-hero h1 {
+    font-size: 48px;
+    letter-spacing: -2px;
+  }
+
+  .tropical-hero-content > p {
+    font-size: 15px;
+  }
+
+  .tropical-hero-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .tropical-video-control {
+    right: 5%;
+    bottom: 65px;
+  }
+
+  .tropical-hero-bottom {
+    font-size: 8px;
+  }
+
+  .tropical-intro {
+    padding-top: 70px;
+  }
+
+  .tropical-section-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .tropical-destinations .destination-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .tropical-experience-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .tropical-ai-section {
+    padding-top: 75px;
+    padding-bottom: 75px;
+  }
+
+  .tropical-final-cta {
+    padding: 75px 0;
+  }
+}
+
+/* =========================================
+   TROPICAL DESTINATION CARDS
+========================================= */
+
+.tropical-destination-card {
+  overflow: hidden;
+  border-radius: 18px;
+  background: #ffffff;
+  border: 1px solid #e8eee8;
+  box-shadow: 0 12px 35px rgba(6, 75, 80, 0.07);
+  transition: all 0.35s ease;
+}
+
+.tropical-destination-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 22px 45px rgba(6, 75, 80, 0.15);
+}
+
+.tropical-destination-image {
+  position: relative;
+  height: 250px;
+  overflow: hidden;
+}
+
+.tropical-destination-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s ease;
+}
+
+.tropical-destination-card:hover
+.tropical-destination-image img {
+  transform: scale(1.08);
+}
+
+.tropical-destination-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    0deg,
+    rgba(3, 42, 46, 0.65),
+    transparent 65%
+  );
+}
+
+.tropical-category-pill {
+  position: absolute;
+  top: 18px;
+  left: 18px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 13px;
+  border-radius: 30px;
+  background: #fffaf2;
+  color: #087e8b;
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.tropical-image-location {
+  position: absolute;
+  bottom: 17px;
+  left: 18px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: white;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.tropical-destination-content {
+  padding: 24px;
+}
+
+.tropical-destination-content h3 {
+  margin: 0 0 12px;
+  color: #064b50;
+  font-size: 23px;
+  font-weight: 800;
+}
+
+.tropical-destination-content > p {
+  min-height: 55px;
+  margin-bottom: 22px;
+  color: #71827d;
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.tropical-destination-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-top: 18px;
+  border-top: 1px solid #e9eee9;
+}
+
+.tropical-destination-budget {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.tropical-destination-budget span {
+  color: #84928d;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 1px;
+}
+
+.tropical-destination-budget strong {
+  color: #087e8b;
+  font-size: 16px;
+}
+
+.tropical-destination-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 12px 15px;
+  border-radius: 8px;
+  background: #ff8057;
+  color: white;
+  font-size: 12px;
+  font-weight: 800;
+  text-decoration: none;
+  transition: 0.3s ease;
+}
+
+.tropical-destination-button:hover {
+  background: #e96943;
+  transform: translateY(-2px);
+}

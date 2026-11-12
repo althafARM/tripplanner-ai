@@ -3,7 +3,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { useEffect, useRef, useState } from "react";
 import type { FormEvent } from "react";
-
+import "./ChatAssistance.css";
 import {
   Bot,
   Send,

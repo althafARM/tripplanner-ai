@@ -1,5 +1,5 @@
-
 import { useEffect, useMemo, useState } from "react";
+
 import {
   Search,
   SlidersHorizontal,
@@ -8,13 +8,18 @@ import {
   MapPin,
   ArrowRight,
   X,
+  Palmtree,
 } from "lucide-react";
 
 import { Link } from "react-router-dom";
+
 import DestinationCard from "../components/DestinationCard";
 import { getDestinations } from "../services/api";
 import { sampleDestinations } from "../data/destinations";
+
 import type { Destination } from "../types";
+
+import "./Explore.css";
 
 const categories = [
   "All",
@@ -39,7 +44,23 @@ export default function Explore() {
         if (!active) return;
 
         if (data.length) {
-          setItems(data);
+          const updatedDestinations = data.map((destination) => {
+            const sampleDestination = sampleDestinations.find(
+              (sample) =>
+                sample.name.toLowerCase().trim() ===
+                destination.name.toLowerCase().trim()
+            );
+
+            return {
+              ...destination,
+              image:
+                sampleDestination?.image ||
+                destination.image ||
+                "",
+            };
+          });
+
+          setItems(updatedDestinations);
         }
 
         setNotice("");
@@ -47,7 +68,7 @@ export default function Explore() {
       .catch(() => {
         if (active) {
           setNotice(
-            "Showing sample destinations. Connect the backend to load its destination list."
+            "Showing sample destinations because the destination service is unavailable."
           );
         }
       })
@@ -80,82 +101,105 @@ export default function Explore() {
   };
 
   return (
-    <div className="page-shell midnight-explore-page">
+    <div className="tropical-explore-page">
 
-      {/* Explore Hero */}
-      <section className="midnight-explore-hero">
-        <div className="midnight-explore-overlay" />
+      {/* EXPLORE HERO */}
 
-        <div className="container midnight-explore-hero-content">
-          <span className="midnight-explore-eyebrow">
-            <Compass size={15} />
-            DISCOVER YOUR NEXT ADVENTURE
+      <section className="tropical-explore-hero">
+
+        <div className="tropical-explore-hero-overlay" />
+
+        <div className="tropical-explore-hero-content">
+
+          <span className="tropical-explore-eyebrow">
+            <Palmtree size={17} />
+            DISCOVER THE BEAUTY OF SRI LANKA
           </span>
 
           <h1>
-            Explore beautiful places.
+            Find your next
             <br />
-            <span>Collect unforgettable moments.</span>
+            <span>tropical escape.</span>
           </h1>
 
           <p>
-            From peaceful beaches to breathtaking mountains,
-            discover destinations that make every journey special.
+            Explore golden beaches, misty mountains,
+            ancient wonders and unforgettable places
+            across the beautiful island of Sri Lanka.
           </p>
 
           <Link
             to="/planner"
-            className="midnight-explore-hero-button"
+            className="tropical-explore-hero-button"
           >
             Plan your journey
-            <ArrowRight size={18} />
+            <ArrowRight size={19} />
           </Link>
 
-          <div className="midnight-explore-hero-note">
-            <Sparkles size={15} />
-            Discover amazing destinations across Sri Lanka
+          <div className="tropical-explore-hero-note">
+            <Sparkles size={16} />
+            Your next unforgettable journey starts here.
           </div>
+
         </div>
+
+        <div className="tropical-explore-hero-bottom">
+          <span>ISLAND OF PARADISE</span>
+          <span>7°52' N — 80°46' E</span>
+        </div>
+
       </section>
 
-      {/* Destination Explorer */}
-      <section className="container midnight-explore-content">
 
-        <div className="midnight-explore-heading">
+      {/* DESTINATION EXPLORER */}
+
+      <section className="tropical-explore-content">
+
+        {/* SECTION HEADING */}
+
+        <div className="tropical-explore-heading">
+
           <div>
-            <span className="midnight-explore-section-label">
-              EXPLORE THE POSSIBILITIES
+            <span className="tropical-explore-section-label">
+              EXPLORE THE ISLAND
             </span>
 
             <h2>
-              Find your <span>perfect destination.</span>
+              Discover your
+              <span> perfect destination.</span>
             </h2>
 
             <p>
-              Search, discover and find the right place for your next trip.
+              From peaceful nature escapes to exciting adventures,
+              find a destination that matches your travel style.
             </p>
           </div>
 
-          <div className="midnight-explore-count">
-            <Compass size={21} />
+          <div className="tropical-explore-count">
+            <Compass size={25} />
+
             <div>
               <strong>{filtered.length}</strong>
-              <span>Places to explore</span>
+              <span>Destinations</span>
             </div>
           </div>
+
         </div>
 
-        {/* Search and Filters */}
-        <div className="midnight-explore-toolbar">
 
-          <label className="midnight-search-box">
-            <Search size={20} />
+        {/* SEARCH AND FILTERS */}
+
+        <div className="tropical-explore-toolbar">
+
+          <label className="tropical-search-box">
+
+            <Search size={21} />
 
             <input
               type="text"
               value={query}
               onChange={(event) => setQuery(event.target.value)}
-              placeholder="Search destinations, locations..."
+              placeholder="Where would you like to explore?"
             />
 
             {query && (
@@ -164,82 +208,108 @@ export default function Explore() {
                 onClick={() => setQuery("")}
                 aria-label="Clear search"
               >
-                <X size={17} />
+                <X size={18} />
               </button>
             )}
+
           </label>
 
-          <div className="midnight-filter-heading">
+
+          <div className="tropical-filter-heading">
             <SlidersHorizontal size={18} />
             <span>Explore by category</span>
           </div>
 
-          <div className="midnight-category-filters">
+
+          <div className="tropical-category-filters">
+
             {categories.map((item) => (
+
               <button
                 key={item}
                 type="button"
                 className={
                   category === item
-                    ? "midnight-filter-chip active"
-                    : "midnight-filter-chip"
+                    ? "tropical-filter-chip active"
+                    : "tropical-filter-chip"
                 }
                 onClick={() => setCategory(item)}
               >
                 {item}
               </button>
+
             ))}
+
           </div>
+
         </div>
 
-        {/* Backend Notice */}
+
+        {/* BACKEND NOTICE */}
+
         {notice && (
-          <div className="midnight-explore-notice">
-            <MapPin size={17} />
+          <div className="tropical-explore-notice">
+            <MapPin size={18} />
             {notice}
           </div>
         )}
 
-        {/* Results */}
-        <div className="midnight-results-line">
+
+        {/* RESULTS HEADING */}
+
+        <div className="tropical-results-line">
+
           <div>
-            <h3>Discover destinations</h3>
+            <h3>Beautiful places to discover</h3>
+
             <span>
-              {filtered.length} {filtered.length === 1 ? "place" : "places"} found
+              {filtered.length}{" "}
+              {filtered.length === 1 ? "destination" : "destinations"} found
             </span>
           </div>
 
           {(query || category !== "All") && (
             <button
               type="button"
-              className="midnight-reset-filters"
+              className="tropical-reset-filters"
               onClick={clearFilters}
             >
-              <X size={15} />
+              <X size={16} />
               Clear filters
             </button>
           )}
+
         </div>
 
-        {/* Loading */}
+
+        {/* LOADING */}
+
         {loading ? (
-          <div className="midnight-explore-loading">
-            <div className="midnight-loading-spinner" />
+
+          <div className="tropical-explore-loading">
+            <div className="tropical-loading-spinner" />
             <p>Discovering beautiful destinations...</p>
           </div>
+
         ) : filtered.length > 0 ? (
-          <div className="destination-grid midnight-explore-grid">
+
+          <div className="tropical-explore-grid">
+
             {filtered.map((destination) => (
               <DestinationCard
                 key={destination.id}
                 destination={destination}
               />
             ))}
+
           </div>
+
         ) : (
-          <div className="midnight-explore-empty">
-            <div className="midnight-empty-icon">
-              <Search size={30} />
+
+          <div className="tropical-explore-empty">
+
+            <div className="tropical-empty-icon">
+              <Search size={32} />
             </div>
 
             <h3>No destinations found</h3>
@@ -252,14 +322,17 @@ export default function Explore() {
             <button
               type="button"
               onClick={clearFilters}
-              className="midnight-empty-button"
+              className="tropical-empty-button"
             >
               Explore all destinations
             </button>
+
           </div>
+
         )}
 
       </section>
+
     </div>
   );
 }

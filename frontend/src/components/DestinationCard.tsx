@@ -1,57 +1,146 @@
-import { MapPin, ArrowUpRight } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import {
+  MapPin,
+  ArrowUpRight,
+  Sparkles,
+} from "lucide-react";
 import { Link } from "react-router-dom";
+
 import type { Destination } from "../types";
+import "./DestinationCard.css";
+
+interface DestinationCardProps {
+  destination: Destination;
+}
 
 export default function DestinationCard({
   destination,
-}: {
-  destination: Destination;
-}) {
+}: DestinationCardProps) {
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  const [isHovered, setIsHovered] = useState(false);
+  const [isVideoReady, setIsVideoReady] = useState(false);
+
+  // Generate video filename
+  const videoName = destination.name
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+
+  const videoPath = `/videos/destinations/${videoName}.mp4`;
+
+  // Play video on hover
+  useEffect(() => {
+    const video = videoRef.current;
+
+    if (!video || !isVideoReady) return;
+
+    if (isHovered) {
+      video.play().catch((error) => {
+        console.error("Video playback error:", error);
+      });
+    } else {
+      video.pause();
+      video.currentTime = 0;
+    }
+  }, [isHovered, isVideoReady]);
+
   return (
-    <article className="lux-destination-card">
-      <div className="lux-destination-image">
+    <article
+      className="tropical-destination-card"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      {/* DESTINATION IMAGE */}
+      <div className="tropical-destination-image">
+
+        {/* PNG PHOTO - ALWAYS VISIBLE BEFORE HOVER */}
         <img
           src={destination.image}
           alt={destination.name}
-          loading="lazy"
-          onError={(e) => {
-            e.currentTarget.src =
-              "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=1000";
+          className="tropical-destination-fallback"
+          onError={(event) => {
+            console.error(
+              "Image failed to load:",
+              destination.image
+            );
+
+            event.currentTarget.style.background = "#07505e";
           }}
         />
 
-        <span className="lux-category-pill">
+        {/* DESTINATION VIDEO */}
+        <video
+          ref={videoRef}
+          className={`tropical-destination-video ${
+            isHovered && isVideoReady ? "video-playing" : ""
+          }`}
+          src={videoPath}
+          muted
+          loop
+          playsInline
+          preload="auto"
+          onCanPlay={() => setIsVideoReady(true)}
+          onError={() => setIsVideoReady(false)}
+        />
+
+        {/* IMAGE OVERLAY */}
+        <div className="tropical-destination-overlay" />
+
+        {/* CATEGORY */}
+        <span className="tropical-category-pill">
+          <Sparkles size={12} />
           {destination.category}
         </span>
 
-        <div className="lux-image-overlay" />
-      </div>
+        {/* VIDEO INDICATOR */}
+        <div className="tropical-video-indicator">
+          <span className="tropical-video-dot" />
 
-      <div className="lux-destination-content">
-        <div className="lux-destination-location">
-          <MapPin size={15} />
-          {destination.location}
+          {isHovered && isVideoReady
+            ? "NOW PLAYING"
+            : "HOVER TO EXPLORE"}
         </div>
 
-        <h3>{destination.name}</h3>
+        {/* LOCATION */}
+        <div className="tropical-image-location">
+          <MapPin size={15} />
+          <span>{destination.location}</span>
+        </div>
 
-        <p>{destination.description}</p>
+      </div>
 
-        <div className="lux-destination-bottom">
-          <div className="lux-destination-budget">
-            <span>Estimated budget</span>
+      {/* DESTINATION INFORMATION */}
+      <div className="tropical-destination-content">
+
+        <div className="tropical-destination-heading">
+          <h3>{destination.name}</h3>
+          <ArrowUpRight size={21} />
+        </div>
+
+        <p className="tropical-destination-description">
+          {destination.description}
+        </p>
+
+        {/* DESTINATION DETAILS */}
+        <div className="tropical-destination-details">
+
+          <div className="tropical-destination-budget">
+            <span>ESTIMATED BUDGET</span>
             <strong>{destination.budget}</strong>
           </div>
 
           <Link
-            to={`/planner?destination=${encodeURIComponent(
-              destination.name
-            )}`}
-            className="lux-destination-button"
+            to="/planner"
+            className="tropical-plan-button"
           >
-            Plan trip <ArrowUpRight size={17} />
+            <span>Plan Your Trip</span>
+            <ArrowUpRight size={17} />
           </Link>
+
         </div>
+
       </div>
     </article>
   );

@@ -1,4 +1,4 @@
-
+import "./TripPlanner.css";
 import { useState } from "react";
 import type { ReactNode, FormEvent } from "react";
 import ReactMarkdown from "react-markdown";
@@ -24,10 +24,23 @@ import {
   Compass,
   Mountain,
   ArrowUpRight,
+  Fuel,
+  Hotel,
+  AlertCircle,
+  Ticket,
 } from "lucide-react";
 
-import { generateTrip } from "../services/api";
+import { generateTrip, saveTrip } from "../services/api";
 import WeatherCard from "../components/WeatherCard";
+
+import {
+  estimateTravelCost,
+  type CostEstimateResponse,
+} from "../services/costService";
+
+// --------------------------------------------------
+// CONSTANTS
+// --------------------------------------------------
 
 const interestsList = [
   "Nature",
@@ -37,6 +50,10 @@ const interestsList = [
   "Adventure",
   "Photography",
 ];
+
+// --------------------------------------------------
+// TYPES
+// --------------------------------------------------
 
 interface DayPlan {
   title: string;
@@ -49,6 +66,10 @@ interface ActivitySection {
   icon: ReactNode;
   className: string;
 }
+
+// --------------------------------------------------
+// ACTIVITY DEFINITIONS
+// --------------------------------------------------
 
 const activityDefinitions = [
   {
@@ -72,48 +93,89 @@ const activityDefinitions = [
     className: "food",
   },
   {
-    title: "TRANSPORT",
+    title: "TRANSPORT PLAN",
     icon: <Car size={20} />,
     className: "transport",
   },
   {
-    title: "ESTIMATED DAILY COST",
-    icon: <Wallet size={20} />,
-    className: "cost",
+    title: "TRANSPORT",
+    icon: <Car size={20} />,
+    className: "transport",
   },
 ];
 
-// Split an itinerary into individual days.
+// --------------------------------------------------
+// FORMAT CURRENCY
+// --------------------------------------------------
+
+const formatLKR = (amount: number | undefined | null) => {
+  return `LKR ${Number(amount ?? 0).toLocaleString("en-LK", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  })}`;
+};
+
+// --------------------------------------------------
+// SEPARATE ITINERARY DAYS
+// --------------------------------------------------
+
 const getDayPlans = (text: string): DayPlan[] => {
-  const sections = text.split(
-    /(?=^\s{0,3}(?:#{1,6}\s*)?(?:\*\*)?DAY\s+\d+\b.*$)/gim
-  );
+  const cleanedText = text
+    .replace(/svgDaily travel plansvgAI generated/gi, "")
+    .replace(/^svg\s*$/gim, "")
+    .trim();
 
-  return sections
-    .map((section) => {
-      const lines = section.trim().split("\n");
+  const headingPattern =
+    /^\s{0,3}(?:#{1,6}\s*)?(?:\*\*)?DAY[\s\u00a0\u202f]*(\d+)\s*[–—-][^\r\n]*(?:\*\*)?\s*$/gim;
 
-      const title = lines[0]
+  const matches = [...cleanedText.matchAll(headingPattern)];
+
+  return matches
+    .map((match, index) => {
+      const start = match.index! + match[0].length;
+
+      const nextMatch = matches[index + 1];
+
+      const end = nextMatch
+        ? nextMatch.index!
+        : cleanedText.length;
+
+      const dayNumber = match[1];
+
+      const headingText = match[0]
         .replace(/^#{1,6}\s*/, "")
         .replace(/\*\*/g, "")
         .trim();
 
+      const cleanTitle = headingText
+        .replace(
+          /^(?:DAY[\s\u00a0\u202f]*\d+\s*[–—-]\s*)+/i,
+          ""
+        )
+        .trim();
+
+      const content = cleanedText
+        .slice(start, end)
+        .replace(/^\s*---+\s*$/gm, "")
+        .trim();
+
       return {
-        title,
-        content: lines.slice(1).join("\n").trim(),
+        title: `DAY ${dayNumber} – ${cleanTitle}`,
+        content,
       };
     })
-    .filter(
-      (day) =>
-        /^DAY\s+\d+/i.test(day.title) &&
-        day.content.length > 0
-    );
+    .filter((day) => day.content.length > 0);
 };
 
-// Split each day into morning, afternoon, evening, etc.
-const getActivitySections = (text: string): ActivitySection[] => {
+// --------------------------------------------------
+// SEPARATE ACTIVITY SECTIONS
+// --------------------------------------------------
+
+const getActivitySections = (
+  text: string
+): ActivitySection[] => {
   const headingPattern =
-    /^\s*(?:#{1,6}\s*)?(?:\*\*)?(MORNING|AFTERNOON|EVENING|FOOD RECOMMENDATIONS|TRANSPORT|ESTIMATED DAILY COST)(?:\*\*)?\s*:?\s*$/gim;
+    /^\s*(?:#{1,6}\s*)?(?:\*\*)?(MORNING|AFTERNOON|EVENING|FOOD RECOMMENDATIONS|TRANSPORT PLAN|TRANSPORT)(?:\*\*)?\s*:?\s*$/gim;
 
   const matches = [...text.matchAll(headingPattern)];
 
@@ -124,14 +186,22 @@ const getActivitySections = (text: string): ActivitySection[] => {
       );
 
       if (matchIndex === -1) {
-        return { ...item, content: "" };
+        return {
+          ...item,
+          content: "",
+        };
       }
 
       const currentMatch = matches[matchIndex];
-      const start = currentMatch.index! + currentMatch[0].length;
+
+      const start =
+        currentMatch.index! + currentMatch[0].length;
+
       const nextMatch = matches[matchIndex + 1];
 
-      const end = nextMatch ? nextMatch.index! : text.length;
+      const end = nextMatch
+        ? nextMatch.index!
+        : text.length;
 
       return {
         ...item,
@@ -141,9 +211,14 @@ const getActivitySections = (text: string): ActivitySection[] => {
     .filter((item) => item.content.length > 0);
 };
 
+// --------------------------------------------------
+// MAIN COMPONENT
+// --------------------------------------------------
+
 export default function TripPlanner() {
   const [searchParams] = useSearchParams();
 
+  // Trip details
   const [destination, setDestination] = useState(
     searchParams.get("destination") || ""
   );
@@ -155,29 +230,61 @@ export default function TripPlanner() {
   const [budget, setBudget] = useState("50000");
   const [style, setStyle] = useState("Relaxing");
 
+  // Transport
+  const [transportType, setTransportType] =
+    useState("own_vehicle");
+
+  const [bookedVehicle, setBookedVehicle] =
+    useState("car");
+
+  const transportPreference =
+    transportType === "own_vehicle"
+      ? "Transport preference: Use the user's own vehicle."
+      : transportType === "book_vehicle"
+        ? `Transport preference: Book a ${bookedVehicle} for the trip.`
+        : `Transport preference: Travel by ${transportType}.`;
+
+  // Interests
   const [interests, setInterests] = useState<string[]>([
     "Nature",
     "Food",
   ]);
 
+  // Application states
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [itinerary, setItinerary] = useState("");
 
+  const [costResult, setCostResult] =
+    useState<CostEstimateResponse | null>(null);
+
+  const [savingTrip, setSavingTrip] = useState(false);
+  const [tripSaved, setTripSaved] = useState(false);
+  const [saveMessage, setSaveMessage] = useState("");
+
   const today = new Date().toISOString().split("T")[0];
 
-  // Calculate trip duration.
+  // --------------------------------------------------
+  // TRIP DURATION
+  // --------------------------------------------------
+
   const days =
     startDate && endDate
       ? Math.max(
           1,
           Math.round(
-            (new Date(`${endDate}T00:00:00`).getTime() -
-              new Date(`${startDate}T00:00:00`).getTime()) /
+            (
+              new Date(`${endDate}T00:00:00`).getTime() -
+              new Date(`${startDate}T00:00:00`).getTime()
+            ) /
               (1000 * 60 * 60 * 24)
           ) + 1
         )
       : 0;
+
+  // --------------------------------------------------
+  // TOGGLE INTERESTS
+  // --------------------------------------------------
 
   const toggleInterest = (interest: string) => {
     setInterests((previous) =>
@@ -187,7 +294,10 @@ export default function TripPlanner() {
     );
   };
 
-  // Generate the AI itinerary.
+  // --------------------------------------------------
+  // GENERATE TRIP
+  // --------------------------------------------------
+
   const handleGenerate = async (
     event: FormEvent<HTMLFormElement>
   ) => {
@@ -195,6 +305,9 @@ export default function TripPlanner() {
 
     setError("");
     setItinerary("");
+    setCostResult(null);
+    setTripSaved(false);
+    setSaveMessage("");
 
     if (!destination.trim()) {
       setError("Please enter your destination.");
@@ -221,24 +334,131 @@ export default function TripPlanner() {
       return;
     }
 
+    if (!budget || Number(budget) < 1000) {
+      setError("Please enter a valid trip budget.");
+      return;
+    }
+
     try {
       setLoading(true);
 
+      // Generate AI itinerary
       const response = await generateTrip({
         destination: destination.trim(),
         start_location: startLocation.trim(),
         days,
         budget: `LKR ${budget}`,
-        travel_style: `${style}. Interests: ${interests.join(", ")}.`,
+        travel_style:
+          `${style}. Interests: ${interests.join(", ")}. ${transportPreference}`,
         travellers,
       });
 
+      console.log("RAW AI ITINERARY:", response.itinerary);
+
       if (!response?.itinerary) {
-        throw new Error("The AI did not return an itinerary.");
+        throw new Error(
+          "The AI did not return an itinerary."
+        );
       }
 
+      // ----------------------------------------------
+      // BACKEND COST ESTIMATION
+      // ----------------------------------------------
+
+      try {
+        const isOwnVehicle =
+          transportType === "own_vehicle";
+
+        const isBookingVehicle =
+          transportType === "book_vehicle";
+
+        let selectedVehicle:
+          | "car"
+          | "van"
+          | "tuk_tuk"
+          | null = null;
+
+        if (isOwnVehicle) {
+          selectedVehicle = "car";
+        } else if (isBookingVehicle) {
+          if (bookedVehicle === "tuk-tuk") {
+            selectedVehicle = "tuk_tuk";
+          } else if (
+            bookedVehicle === "car" ||
+            bookedVehicle === "van"
+          ) {
+            selectedVehicle = bookedVehicle;
+          }
+        }
+
+        let selectedTransport:
+          | "train"
+          | "bus"
+          | "tuk_tuk"
+          | "car"
+          | "van"
+          | null = null;
+
+        if (isOwnVehicle) {
+          selectedTransport = null;
+        } else if (isBookingVehicle) {
+          selectedTransport =
+            bookedVehicle === "tuk-tuk"
+              ? "tuk_tuk"
+              : bookedVehicle === "bus"
+                ? "bus"
+                : bookedVehicle === "car"
+                  ? "car"
+                  : "van";
+        } else {
+          selectedTransport =
+            transportType as "train" | "bus";
+        }
+
+        const accommodation =
+          style === "Budget"
+            ? "budget"
+            : style === "Luxury"
+              ? "luxury"
+              : "standard";
+
+        const food =
+          style === "Budget"
+            ? "budget"
+            : style === "Luxury"
+              ? "luxury"
+              : "standard";
+
+        const estimate = await estimateTravelCost({
+          destination: destination.trim(),
+          start_location: startLocation.trim(),
+          days,
+          travellers,
+          budget: Number(budget),
+          has_own_vehicle: isOwnVehicle,
+          vehicle_type: selectedVehicle,
+          transport_mode: selectedTransport,
+          accommodation_type: accommodation,
+          food_type: food,
+        });
+
+        setCostResult(estimate);
+
+        console.log("COST ESTIMATE RESPONSE:", estimate);
+      } catch (costError) {
+        console.error(
+          "Cost estimation failed:",
+          costError
+        );
+
+        setCostResult(null);
+      }
+
+      // Show itinerary even if cost estimation fails
       setItinerary(response.itinerary);
     } catch (err: unknown) {
+      console.error("Trip generation failed:", err);
+
       const message =
         err instanceof Error
           ? err.message
@@ -250,10 +470,55 @@ export default function TripPlanner() {
     }
   };
 
-  // Reset the planner.
+  // --------------------------------------------------
+  // SAVE TRIP
+  // --------------------------------------------------
+
+  const handleSaveTrip = async () => {
+    try {
+      setSavingTrip(true);
+      setSaveMessage("");
+
+      await saveTrip({
+        destination: destination.trim(),
+        start_location: startLocation.trim(),
+        days,
+        budget: `LKR ${budget}`,
+        travel_style:
+          `${style}. Interests: ${interests.join(", ")}. ${transportPreference}`,
+        travellers,
+        itinerary,
+      });
+
+      setTripSaved(true);
+
+      setSaveMessage(
+        "Your trip has been saved successfully!"
+      );
+    } catch (err: unknown) {
+      console.error("Save trip failed:", err);
+
+      const message =
+        err instanceof Error
+          ? err.message
+          : "Unable to save your trip.";
+
+      setSaveMessage(message);
+    } finally {
+      setSavingTrip(false);
+    }
+  };
+
+  // --------------------------------------------------
+  // RESET PLANNER
+  // --------------------------------------------------
+
   const resetPlanner = () => {
     setItinerary("");
     setError("");
+    setCostResult(null);
+    setTripSaved(false);
+    setSaveMessage("");
 
     window.scrollTo({
       top: 0,
@@ -261,16 +526,104 @@ export default function TripPlanner() {
     });
   };
 
-  const dayPlans = itinerary ? getDayPlans(itinerary) : [];
+  // --------------------------------------------------
+  // PREPARE ITINERARY
+  // --------------------------------------------------
 
-  const googleMapsUrl = `https://www.google.com/maps/dir/${encodeURIComponent(
-    startLocation.trim()
-  )}/${encodeURIComponent(destination.trim())}`;
+  const dayPlans = itinerary
+    ? getDayPlans(itinerary)
+    : [];
+
+  const googleMapsUrl =
+    `https://www.google.com/maps/dir/${encodeURIComponent(
+      startLocation.trim()
+    )}/${encodeURIComponent(destination.trim())}`;
+
+  const expenseBreakdownItems = costResult
+    ? [
+        { name: "Transport", amount: costResult.cost_breakdown.transport?.amount ?? 0 },
+        { name: "Fuel", amount: costResult.cost_breakdown.fuel?.amount ?? 0 },
+        { name: "Vehicle Hire", amount: costResult.cost_breakdown.vehicle_hire?.amount ?? 0 },
+        { name: "Accommodation", amount: costResult.cost_breakdown.accommodation?.amount ?? 0 },
+        { name: "Food", amount: costResult.cost_breakdown.food?.amount ?? 0 },
+        { name: "Attractions", amount: costResult.cost_breakdown.attractions?.amount ?? 0 },
+        { name: "Other Expenses", amount: costResult.cost_breakdown.other_expenses?.amount ?? 0 },
+      ]
+    : [];
+
+  const expenseTotal = costResult?.summary.total_estimated_cost ?? 0;
+
+  // --------------------------------------------------
+  // MARKDOWN COMPONENTS
+  // --------------------------------------------------
+
+  const markdownComponents = {
+    h1: ({ children }: { children?: ReactNode }) => (
+      <h1 className="itinerary-main-heading">
+        {children}
+      </h1>
+    ),
+
+    h2: ({ children }: { children?: ReactNode }) => (
+      <h2 className="itinerary-section-heading">
+        {children}
+      </h2>
+    ),
+
+    h3: ({ children }: { children?: ReactNode }) => (
+      <h3 className="itinerary-sub-heading">
+        {children}
+      </h3>
+    ),
+
+    p: ({ children }: { children?: ReactNode }) => (
+      <p className="itinerary-paragraph">
+        {children}
+      </p>
+    ),
+
+    ul: ({ children }: { children?: ReactNode }) => (
+      <ul className="itinerary-list">
+        {children}
+      </ul>
+    ),
+
+    ol: ({ children }: { children?: ReactNode }) => (
+      <ol className="itinerary-list">
+        {children}
+      </ol>
+    ),
+
+    li: ({ children }: { children?: ReactNode }) => (
+      <li className="itinerary-list-item">
+        {children}
+      </li>
+    ),
+
+    strong: ({ children }: { children?: ReactNode }) => (
+      <strong className="itinerary-bold">
+        {children}
+      </strong>
+    ),
+
+    table: ({ children }: { children?: ReactNode }) => (
+      <div className="itinerary-table-wrapper">
+        <table className="itinerary-table">
+          {children}
+        </table>
+      </div>
+    ),
+  };
+
+  // --------------------------------------------------
+  // MAIN JSX
+  // --------------------------------------------------
 
   return (
     <div className="midnight-planner-page">
 
       {/* HERO SECTION */}
+
       <section className="midnight-planner-hero">
         <div className="midnight-planner-hero-overlay" />
 
@@ -312,10 +665,10 @@ export default function TripPlanner() {
       <main className="midnight-planner-container">
 
         {/* TRIP FORM */}
+
         {!itinerary && (
           <div className="midnight-planner-layout">
 
-            {/* LEFT FORM */}
             <section className="midnight-planner-form-card">
 
               <div className="midnight-planner-card-heading">
@@ -340,6 +693,7 @@ export default function TripPlanner() {
               <form onSubmit={handleGenerate}>
 
                 {/* DESTINATION */}
+
                 <div className="midnight-planner-form-group">
                   <label>
                     <MapPin size={17} />
@@ -350,12 +704,15 @@ export default function TripPlanner() {
                     type="text"
                     placeholder="e.g. Ella, Sri Lanka"
                     value={destination}
-                    onChange={(e) => setDestination(e.target.value)}
+                    onChange={(e) =>
+                      setDestination(e.target.value)
+                    }
                     required
                   />
                 </div>
 
                 {/* START LOCATION */}
+
                 <div className="midnight-planner-form-group">
                   <label>
                     <Compass size={17} />
@@ -366,12 +723,15 @@ export default function TripPlanner() {
                     type="text"
                     placeholder="e.g. Colombo"
                     value={startLocation}
-                    onChange={(e) => setStartLocation(e.target.value)}
+                    onChange={(e) =>
+                      setStartLocation(e.target.value)
+                    }
                     required
                   />
                 </div>
 
                 {/* DATES */}
+
                 <div className="midnight-planner-form-row">
 
                   <div className="midnight-planner-form-group">
@@ -384,7 +744,9 @@ export default function TripPlanner() {
                       type="date"
                       value={startDate}
                       min={today}
-                      onChange={(e) => setStartDate(e.target.value)}
+                      onChange={(e) =>
+                        setStartDate(e.target.value)
+                      }
                       required
                     />
                   </div>
@@ -399,7 +761,9 @@ export default function TripPlanner() {
                       type="date"
                       value={endDate}
                       min={startDate || today}
-                      onChange={(e) => setEndDate(e.target.value)}
+                      onChange={(e) =>
+                        setEndDate(e.target.value)
+                      }
                       required
                     />
                   </div>
@@ -407,15 +771,19 @@ export default function TripPlanner() {
                 </div>
 
                 {/* DURATION */}
+
                 <div className="midnight-planner-duration">
                   <Clock size={17} />
 
                   {days > 0
-                    ? `Your journey: ${days} ${days === 1 ? "day" : "days"}`
+                    ? `Your journey: ${days} ${
+                        days === 1 ? "day" : "days"
+                      }`
                     : "Select your dates to calculate trip duration"}
                 </div>
 
                 {/* TRAVELLERS */}
+
                 <div className="midnight-planner-form-group">
                   <label>
                     <Users size={17} />
@@ -426,20 +794,22 @@ export default function TripPlanner() {
                     <button
                       type="button"
                       onClick={() =>
-                        setTravellers((value) => Math.max(1, value - 1))
+                        setTravellers((value) =>
+                          Math.max(1, value - 1)
+                        )
                       }
                     >
                       −
                     </button>
 
-                    <span>
-                      {travellers} Travellers
-                    </span>
+                    <span>{travellers} Travellers</span>
 
                     <button
                       type="button"
                       onClick={() =>
-                        setTravellers((value) => Math.min(20, value + 1))
+                        setTravellers((value) =>
+                          Math.min(20, value + 1)
+                        )
                       }
                     >
                       +
@@ -448,6 +818,7 @@ export default function TripPlanner() {
                 </div>
 
                 {/* BUDGET */}
+
                 <div className="midnight-planner-form-group">
                   <label>
                     <Wallet size={17} />
@@ -462,13 +833,16 @@ export default function TripPlanner() {
                       min="1000"
                       placeholder="50000"
                       value={budget}
-                      onChange={(e) => setBudget(e.target.value)}
+                      onChange={(e) =>
+                        setBudget(e.target.value)
+                      }
                       required
                     />
                   </div>
                 </div>
 
                 {/* TRAVEL STYLE */}
+
                 <div className="midnight-planner-form-group">
                   <label>
                     <Sparkles size={17} />
@@ -498,7 +872,100 @@ export default function TripPlanner() {
                   </div>
                 </div>
 
+                {/* TRANSPORT */}
+
+                <div className="midnight-planner-form-group">
+                  <label>
+                    <Car size={17} />
+                    Choose Your Transport
+                  </label>
+
+                  <div className="midnight-planner-style-options">
+                    {[
+                      {
+                        value: "own_vehicle",
+                        label: "Own Vehicle",
+                      },
+                      {
+                        value: "book_vehicle",
+                        label: "Book Vehicle",
+                      },
+                      {
+                        value: "train",
+                        label: "Train",
+                      },
+                      {
+                        value: "bus",
+                        label: "Bus",
+                      },
+                    ].map((item) => (
+                      <button
+                        type="button"
+                        key={item.value}
+                        className={
+                          transportType === item.value
+                            ? "midnight-planner-style-option active"
+                            : "midnight-planner-style-option"
+                        }
+                        onClick={() =>
+                          setTransportType(item.value)
+                        }
+                      >
+                        {item.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* BOOKED VEHICLE */}
+
+                {transportType === "book_vehicle" && (
+                  <div className="midnight-planner-form-group">
+                    <label>
+                      <Car size={17} />
+                      Select Vehicle Type
+                    </label>
+
+                    <div className="midnight-planner-style-options">
+                      {[
+                        {
+                          value: "tuk-tuk",
+                          label: "Tuk-tuk",
+                        },
+                        {
+                          value: "car",
+                          label: "Car",
+                        },
+                        {
+                          value: "van",
+                          label: "Van",
+                        },
+                        {
+                          value: "bus",
+                          label: "Bus",
+                        },
+                      ].map((item) => (
+                        <button
+                          type="button"
+                          key={item.value}
+                          className={
+                            bookedVehicle === item.value
+                              ? "midnight-planner-style-option active"
+                              : "midnight-planner-style-option"
+                          }
+                          onClick={() =>
+                            setBookedVehicle(item.value)
+                          }
+                        >
+                          {item.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
                 {/* INTERESTS */}
+
                 <div className="midnight-planner-form-group">
                   <label>
                     <Sparkles size={17} />
@@ -515,7 +982,9 @@ export default function TripPlanner() {
                             ? "midnight-planner-interest-option active"
                             : "midnight-planner-interest-option"
                         }
-                        onClick={() => toggleInterest(interest)}
+                        onClick={() =>
+                          toggleInterest(interest)
+                        }
                       >
                         {interests.includes(interest) && (
                           <CheckCircle2 size={14} />
@@ -528,13 +997,15 @@ export default function TripPlanner() {
                 </div>
 
                 {/* ERROR */}
+
                 {error && (
                   <div className="midnight-planner-error">
                     {error}
                   </div>
                 )}
 
-                {/* GENERATE BUTTON */}
+                {/* GENERATE */}
+
                 <button
                   type="submit"
                   className="midnight-planner-generate-button"
@@ -542,7 +1013,10 @@ export default function TripPlanner() {
                 >
                   {loading ? (
                     <>
-                      <RefreshCw size={19} className="midnight-spin" />
+                      <RefreshCw
+                        size={19}
+                        className="midnight-spin"
+                      />
                       Creating your adventure...
                     </>
                   ) : (
@@ -563,6 +1037,7 @@ export default function TripPlanner() {
             </section>
 
             {/* RIGHT SIDEBAR */}
+
             <aside className="midnight-planner-sidebar">
 
               <div className="midnight-planner-sidebar-image">
@@ -584,6 +1059,7 @@ export default function TripPlanner() {
               </div>
 
               {/* SUMMARY */}
+
               <div className="midnight-planner-summary-card">
                 <div className="midnight-planner-summary-heading">
                   <div>
@@ -596,7 +1072,6 @@ export default function TripPlanner() {
 
                 <div className="midnight-planner-summary-item">
                   <MapPin size={19} />
-
                   <div>
                     <span>Destination</span>
                     <strong>
@@ -607,7 +1082,6 @@ export default function TripPlanner() {
 
                 <div className="midnight-planner-summary-item">
                   <CalendarDays size={19} />
-
                   <div>
                     <span>Duration</span>
                     <strong>
@@ -618,7 +1092,6 @@ export default function TripPlanner() {
 
                 <div className="midnight-planner-summary-item">
                   <Users size={19} />
-
                   <div>
                     <span>Travellers</span>
                     <strong>{travellers} People</strong>
@@ -627,7 +1100,6 @@ export default function TripPlanner() {
 
                 <div className="midnight-planner-summary-item">
                   <Wallet size={19} />
-
                   <div>
                     <span>Total budget</span>
                     <strong>
@@ -637,8 +1109,23 @@ export default function TripPlanner() {
                 </div>
 
                 <div className="midnight-planner-summary-item">
-                  <Sparkles size={19} />
+                  <Car size={19} />
+                  <div>
+                    <span>Transport</span>
+                    <strong>
+                      {transportType === "own_vehicle"
+                        ? "Own Vehicle"
+                        : transportType === "book_vehicle"
+                          ? `Book ${bookedVehicle}`
+                          : transportType === "train"
+                            ? "Train"
+                            : "Bus"}
+                    </strong>
+                  </div>
+                </div>
 
+                <div className="midnight-planner-summary-item">
+                  <Sparkles size={19} />
                   <div>
                     <span>Travel style</span>
                     <strong>{style}</strong>
@@ -647,6 +1134,7 @@ export default function TripPlanner() {
               </div>
 
               {/* TRAVEL TIP */}
+
               <div className="midnight-planner-tip">
                 <div className="midnight-planner-tip-icon">
                   <Lightbulb size={23} />
@@ -667,16 +1155,24 @@ export default function TripPlanner() {
           </div>
         )}
 
-        {/* LOADING SCREEN */}
+        {/* LOADING */}
+
         {loading && (
           <div className="midnight-planner-loading">
+            <div className="midnight-planner-loading-glow" />
+
             <div className="midnight-planner-loading-icon">
-              <Plane size={36} />
+              <Plane size={34} />
+              <Sparkles className="planner-loading-sparkle" size={18} />
             </div>
 
-            <span>YOUR ADVENTURE IS TAKING SHAPE</span>
+            <span className="midnight-planner-loading-label">
+              YOUR ADVENTURE IS TAKING SHAPE
+            </span>
 
-            <h2>Creating your dream trip...</h2>
+            <h2>
+              Creating your <span>dream trip...</span>
+            </h2>
 
             <p>
               Our AI is preparing destinations, activities
@@ -686,14 +1182,21 @@ export default function TripPlanner() {
             <div className="midnight-planner-progress">
               <span />
             </div>
+
+            <div className="midnight-planner-loading-status">
+              <span className="planner-loading-dot" />
+              TripPlanner AI is planning your journey
+            </div>
           </div>
         )}
 
         {/* ITINERARY RESULT */}
+
         {itinerary && (
           <section className="midnight-planner-result">
 
             {/* RESULT HEADER */}
+
             <div className="midnight-planner-result-header">
               <div>
                 <span className="midnight-planner-step">
@@ -722,6 +1225,7 @@ export default function TripPlanner() {
             </div>
 
             {/* TRIP OVERVIEW */}
+
             <div className="midnight-planner-result-overview">
 
               <div className="midnight-planner-overview-item">
@@ -760,7 +1264,111 @@ export default function TripPlanner() {
 
             </div>
 
+            {/* SMART BUDGET ASSISTANT */}
+
+            {costResult && (
+              <section
+                className={`smart-budget-card ${
+                  costResult.budget_advice.can_afford_trip
+                    ? "smart-budget-success"
+                    : "smart-budget-warning"
+                }`}
+              >
+                <div className="smart-budget-header">
+                  <div className="smart-budget-icon">
+                    {costResult.budget_advice.can_afford_trip ? (
+                      <CheckCircle2 size={26} />
+                    ) : (
+                      <Lightbulb size={26} />
+                    )}
+                  </div>
+
+                  <div>
+                    <span>TRIPPLANNER AI</span>
+
+                    <h2>
+                      {costResult.budget_advice.can_afford_trip
+                        ? "Your Trip Is Affordable!"
+                        : "Let's Make Your Trip Affordable"}
+                    </h2>
+                  </div>
+                </div>
+
+                <p className="smart-budget-message">
+                  {costResult.budget_advice.message}
+                </p>
+
+                <div className="smart-budget-difference">
+                  <Wallet size={24} />
+
+                  <div>
+                    <span>
+                      {costResult.budget_advice.can_afford_trip
+                        ? "Remaining Budget"
+                        : "Additional Money Required"}
+                    </span>
+
+                    <strong>
+                      {formatLKR(
+                        costResult.budget_advice.budget_difference
+                      )}
+                    </strong>
+                  </div>
+                </div>
+
+                <div className="smart-budget-cost-details">
+                  <div>
+                    <span>Estimated Trip Cost</span>
+                    <strong>
+                      {formatLKR(
+                        costResult.summary.total_estimated_cost
+                      )}
+                    </strong>
+                  </div>
+
+                  <div>
+                    <span>Your Available Budget</span>
+                    <strong>
+                      {formatLKR(costResult.summary.budget)}
+                    </strong>
+                  </div>
+
+                  <div>
+                    <span>Cost Per Traveller</span>
+                    <strong>
+                      {formatLKR(
+                        costResult.summary.cost_per_traveller
+                      )}
+                    </strong>
+                  </div>
+                </div>
+
+                {!costResult.budget_advice.can_afford_trip &&
+                  costResult.budget_advice.suggestions?.length > 0 && (
+                    <div className="smart-budget-suggestions">
+                      <h3>
+                        <Lightbulb size={19} />
+                        Recommendations to Reduce Costs
+                      </h3>
+
+                      {costResult.budget_advice.suggestions.map(
+                        (suggestion, index) => (
+                          <div
+                            className="smart-budget-suggestion"
+                            key={index}
+                          >
+                            <CheckCircle2 size={17} />
+                            <span>{suggestion}</span>
+                          </div>
+                        )
+                      )}
+                    </div>
+                  )}
+              </section>
+            )}
+
             {/* WEATHER AND MAP */}
+
             <div className="midnight-planner-travel-tools">
 
               <div className="midnight-planner-weather">
@@ -795,6 +1403,7 @@ export default function TripPlanner() {
             </div>
 
             {/* ITINERARY HEADING */}
+
             <div className="midnight-planner-itinerary-heading">
               <span>YOUR TRAVEL SCHEDULE</span>
 
@@ -807,11 +1416,13 @@ export default function TripPlanner() {
             </div>
 
             {/* DAILY ITINERARY */}
+
             <div className="midnight-planner-days">
 
               {dayPlans.length > 0 ? (
                 dayPlans.map((day, index) => {
-                  const activities = getActivitySections(day.content);
+                  const activities =
+                    getActivitySections(day.content);
 
                   return (
                     <article
@@ -834,15 +1445,14 @@ export default function TripPlanner() {
                                 key={activity.title}
                               >
                                 <div className="midnight-planner-activity-heading">
-                                  <div>
-                                    {activity.icon}
-                                  </div>
-
+                                  <div>{activity.icon}</div>
                                   <h4>{activity.title}</h4>
                                 </div>
 
                                 <div className="midnight-planner-activity-content">
-                                  <ReactMarkdown>
+                                  <ReactMarkdown
+                                    components={markdownComponents}
+                                  >
                                     {activity.content}
                                   </ReactMarkdown>
                                 </div>
@@ -851,7 +1461,9 @@ export default function TripPlanner() {
                           </div>
                         ) : (
                           <div className="midnight-planner-full-day-content">
-                            <ReactMarkdown>
+                            <ReactMarkdown
+                              components={markdownComponents}
+                            >
                               {day.content}
                             </ReactMarkdown>
                           </div>
@@ -874,16 +1486,517 @@ export default function TripPlanner() {
                 })
               ) : (
                 <div className="midnight-planner-full-itinerary">
-                  <ReactMarkdown>
-                    {itinerary}
+                  <ReactMarkdown
+                    components={markdownComponents}
+                  >
+                    {itinerary
+                      .replace(/```svg[\s\S]*?```/gi, "")
+                      .replace(/^svg\s*$/gim, "")}
                   </ReactMarkdown>
                 </div>
+              )}
+
+              {/* ---------------------------------------
+                  COMPLETE TRIP SUMMARY
+              --------------------------------------- */}
+
+              {costResult && (
+                <section className="midnight-trip-summary">
+
+                  {/* SUMMARY HEADER */}
+
+                  <div className="trip-summary-header">
+                    <div>
+                      <span className="section-eyebrow">
+                        YOUR TRAVEL FINANCES
+                      </span>
+
+                      <h2>Complete Trip Summary</h2>
+
+                      <p>
+                        Detailed estimated expenses for your
+                        entire journey.
+                      </p>
+                    </div>
+
+                    <Wallet size={32} />
+                  </div>
+
+                  {/* TOTAL COST */}
+
+                  <div className="trip-summary-total">
+                    <span>Total Estimated Trip Cost</span>
+
+                    <h2>
+                      {formatLKR(
+                        costResult.summary.total_estimated_cost
+                      )}
+                    </h2>
+
+                    <p>
+                      For {travellers} traveller
+                      {travellers > 1 ? "s" : ""} over{" "}
+                      {days} day{days > 1 ? "s" : ""}
+                    </p>
+                  </div>
+
+                  {/* OVERVIEW */}
+
+                  <div className="trip-summary-overview">
+
+                    <div className="summary-overview-card">
+                      <Wallet size={22} />
+
+                      <span>Your Budget</span>
+
+                      <strong>
+                        {formatLKR(costResult.summary.budget)}
+                      </strong>
+                    </div>
+
+                    <div className="summary-overview-card">
+                      <Users size={22} />
+
+                      <span>Cost Per Traveller</span>
+
+                      <strong>
+                        {formatLKR(
+                          costResult.summary.cost_per_traveller
+                        )}
+                      </strong>
+                    </div>
+
+                    <div className="summary-overview-card">
+                      <CalendarDays size={22} />
+
+                      <span>Trip Duration</span>
+
+                      <strong>{days} Days</strong>
+                    </div>
+
+                    <div className="summary-overview-card">
+                      <Wallet size={22} />
+
+                      <span>Remaining Budget</span>
+
+                      <strong>
+                        {formatLKR(
+                          costResult.summary.remaining_budget
+                        )}
+                      </strong>
+                    </div>
+
+                  </div>
+
+                  {/* BUDGET PROGRESS DASHBOARD */}
+
+                  <div className="summary-budget-progress">
+
+                    <div className="budget-progress-header">
+                      <div>
+                        <span className="section-eyebrow">
+                          SMART BUDGET TRACKER
+                        </span>
+
+                        <h3>Your Trip Budget</h3>
+
+                        <p>Track your estimated spending against your available budget.</p>
+                      </div>
+
+                      <Wallet size={28} />
+                    </div>
+
+                    {(() => {
+                      const budget = costResult.summary.budget;
+                      const total = costResult.summary.total_estimated_cost;
+
+                      const percentage =
+                        budget > 0 ? (total / budget) * 100 : 0;
+
+                      const remaining = budget - total;
+                      const isOverBudget = total > budget;
+
+                      return (
+                        <>
+                          <div className="budget-progress-amounts">
+
+                            <div>
+                              <span>Estimated Spending</span>
+                              <strong>{formatLKR(total)}</strong>
+                            </div>
+
+                            <div>
+                              <span>Available Budget</span>
+                              <strong>{formatLKR(budget)}</strong>
+                            </div>
+
+                          </div>
+
+                          <div className="budget-progress-track">
+                            <div
+                              className={`budget-progress-fill ${
+                                isOverBudget ? "over-budget" : ""
+                              }`}
+                              style={{
+                                width: `${Math.min(percentage, 100)}%`,
+                              }}
+                            />
+                          </div>
+
+                          <div className="budget-progress-footer">
+
+                            <strong>
+                              {percentage.toFixed(1)}% of budget used
+                            </strong>
+
+                            <span className={isOverBudget ? "budget-negative" : "budget-positive"}>
+                              {isOverBudget
+                                ? `${formatLKR(Math.abs(remaining))} over budget`
+                                : `${formatLKR(remaining)} remaining`}
+                            </span>
+
+                          </div>
+
+                          <div className={`budget-progress-message ${
+                            isOverBudget ? "budget-warning" : "budget-success"
+                          }`}>
+                            {isOverBudget
+                              ? "Your estimated trip cost exceeds your available budget. Consider reducing some expenses."
+                              : "Great! Your estimated trip cost is within your available budget."}
+                          </div>
+                        </>
+                      );
+                    })()}
+
+                  </div>
+
+                  {/* COMPLETE EXPENSE BREAKDOWN */}
+
+                  <div className="summary-expenses">
+
+                    <div className="expense-section-heading">
+                      <div>
+                        <span className="section-eyebrow">TRIP FINANCIAL ANALYSIS</span>
+                        <h3>
+                          <Wallet size={22} />
+                          Complete Expense Breakdown
+                        </h3>
+                        <p className="summary-description">
+                          Understand exactly where your travel money goes.
+                        </p>
+                      </div>
+
+                      <div className="expense-total-badge">
+                        <span>Total Expenses</span>
+                        <strong>{formatLKR(expenseTotal)}</strong>
+                      </div>
+                    </div>
+
+                    <div className="expense-analysis-grid">
+
+                      {expenseBreakdownItems.map((item, index) => {
+                        const percentage =
+                          expenseTotal > 0
+                            ? (item.amount / expenseTotal) * 100
+                            : 0;
+
+                        const icons = [
+                          <Car size={22} />,
+                          <Fuel size={22} />,
+                          <Hotel size={22} />,
+                          <Utensils size={22} />,
+                          <Compass size={22} />,
+                          <Ticket size={22} />,
+                          <Wallet size={22} />,
+                        ];
+
+                        return (
+                          <div className="expense-analysis-card" key={item.name}>
+
+                            <div className="expense-analysis-top">
+                              <div className="expense-analysis-icon">
+                                {icons[index]}
+                              </div>
+
+                              <span className="expense-analysis-percentage">
+                                {percentage.toFixed(1)}%
+                              </span>
+                            </div>
+
+                            <span className="expense-analysis-name">
+                              {item.name}
+                            </span>
+
+                            <strong className="expense-analysis-amount">
+                              {formatLKR(item.amount)}
+                            </strong>
+
+                            <div className="expense-analysis-track">
+                              <div
+                                className="expense-analysis-fill"
+                                style={{
+                                  width: `${Math.min(100, percentage)}%`,
+                                }}
+                              />
+                            </div>
+
+                            <small>Share of total trip cost</small>
+
+                          </div>
+                        );
+                      })}
+
+                    </div>
+
+                  </div>
+
+                  {/* ROUTE DETAILS */}
+
+                  <div className="summary-route-details">
+
+                    <h3>
+                      <MapPin size={22} />
+                      Route Information
+                    </h3>
+
+                    <div className="summary-route-grid">
+
+                      <div>
+                        <span>Starting Location</span>
+                        <strong>
+                          {costResult.trip_details.start_location}
+                        </strong>
+                      </div>
+
+                      <div>
+                        <span>Destination</span>
+                        <strong>
+                          {costResult.trip_details.destination}
+                        </strong>
+                      </div>
+
+                      <div>
+                        <span>One-way Distance</span>
+                        <strong>
+                          {costResult.route_details.one_way_distance_km.toFixed(
+                            2
+                          )}{" "}
+                          km
+                        </strong>
+                      </div>
+
+                      <div>
+                        <span>Round-trip Distance</span>
+                        <strong>
+                          {costResult.route_details.round_trip_distance_km.toFixed(
+                            2
+                          )}{" "}
+                          km
+                        </strong>
+                      </div>
+
+                      <div>
+                        <span>Estimated Travel Time</span>
+                        <strong>
+                          {Math.round(
+                            costResult.route_details.estimated_driving_minutes /
+                              60
+                          )}{" "}
+                          hours
+                        </strong>
+                      </div>
+
+                      <div>
+                        <span>Distance Information</span>
+                        <strong>
+                          {costResult.route_details.distance_source ||
+                            "Estimated"}
+                        </strong>
+                      </div>
+
+                    </div>
+                  </div>
+
+                  {/* FUEL DETAILS */}
+
+                  {costResult.cost_breakdown.fuel && (
+                    <div className="summary-fuel-details">
+
+                      <h3>
+                        <Fuel size={22} />
+                        Fuel Information
+                      </h3>
+
+                      <div className="summary-fuel-grid">
+
+                        <div>
+                          <span>Fuel Type</span>
+
+                          <strong>
+                            {costResult.cost_breakdown.fuel.fuel_type ||
+                              costResult.trip_details.fuel_type ||
+                              "Not specified"}
+                          </strong>
+                        </div>
+
+                        <div>
+                          <span>Fuel Price Per Litre</span>
+
+                          <strong>
+                            {costResult.cost_breakdown.fuel.fuel_price_per_litre
+                              ? formatLKR(
+                                  costResult.cost_breakdown.fuel
+                                    .fuel_price_per_litre
+                                )
+                              : "Not available"}
+                          </strong>
+                        </div>
+
+                        <div>
+                          <span>Estimated Fuel Usage</span>
+
+                          <strong>
+                            {costResult.cost_breakdown.fuel.fuel_litres != null
+                              ? `${costResult.cost_breakdown.fuel.fuel_litres.toFixed(
+                                  2
+                                )} Litres`
+                              : "Not available"}
+                          </strong>
+                        </div>
+
+                        <div>
+                          <span>Fuel Efficiency</span>
+
+                          <strong>
+                            {costResult.cost_breakdown.fuel
+                              .fuel_efficiency_km_per_litre != null
+                              ? `${costResult.cost_breakdown.fuel.fuel_efficiency_km_per_litre} km/L`
+                              : "Not available"}
+                          </strong>
+                        </div>
+
+                      </div>
+                    </div>
+                  )}
+
+                  {/* BUDGET STATUS */}
+
+                  <div className="summary-budget-status">
+
+                    <h3>
+                      {costResult.budget_advice.can_afford_trip ? (
+                        <CheckCircle2 size={22} />
+                      ) : (
+                        <AlertCircle size={22} />
+                      )}
+
+                      Budget Status
+                    </h3>
+
+                    <p>
+                      {costResult.budget_advice.message}
+                    </p>
+
+                    <div className="summary-budget-status-details">
+
+                      <span>
+                        {costResult.budget_advice.can_afford_trip
+                          ? "Your trip is within budget."
+                          : "Your trip is above your available budget."}
+                      </span>
+
+                      <strong>
+                        {costResult.budget_advice.can_afford_trip
+                          ? "Within Budget"
+                          : "Over Budget"}
+                      </strong>
+
+                    </div>
+
+                    {costResult.budget_advice.suggestions?.length > 0 && (
+                      <div className="summary-budget-suggestions">
+
+                        <h4>
+                          <Lightbulb size={19} />
+                          Money-Saving Suggestions
+                        </h4>
+
+                        <ul>
+                          {costResult.budget_advice.suggestions.map(
+                            (suggestion, index) => (
+                              <li key={index}>
+                                {suggestion}
+                              </li>
+                            )
+                          )}
+                        </ul>
+
+                      </div>
+                    )}
+
+                    {costResult.budget_advice.recommended_action && (
+                      <div className="summary-recommended-action">
+                        <strong>Recommended Action</strong>
+
+                        <p>
+                          {costResult.budget_advice.recommended_action}
+                        </p>
+                      </div>
+                    )}
+
+                  </div>
+
+                  {/* PRICE INFORMATION */}
+
+                  {costResult.price_information && (
+                    <div className="summary-price-information">
+
+                      <h4>Price Information</h4>
+
+                      <p>
+                        {costResult.price_information.message}
+                      </p>
+
+                      {costResult.price_information.last_updated && (
+                        <small>
+                          Prices last updated:{" "}
+                          {costResult.price_information.last_updated}
+                        </small>
+                      )}
+
+                      {costResult.price_information.fuel_prices_last_updated && (
+                        <small>
+                          Fuel prices last updated:{" "}
+                          {costResult.price_information.fuel_prices_last_updated}
+                        </small>
+                      )}
+
+                      {costResult.price_information.fuel_price_source && (
+                        <small>
+                          Fuel price source:{" "}
+                          {costResult.price_information.fuel_price_source}
+                        </small>
+                      )}
+
+                    </div>
+                  )}
+
+                  <p className="summary-disclaimer">
+                    Note: All costs are estimates. Actual prices may
+                    change depending on availability, season,
+                    transport arrangements and service providers.
+                    Confirm prices before travelling.
+                  </p>
+
+                </section>
               )}
 
             </div>
 
             {/* TRAVEL TIPS */}
+
             <div className="midnight-planner-result-tip">
+
               <div>
                 <Lightbulb size={25} />
               </div>
@@ -898,15 +2011,60 @@ export default function TripPlanner() {
                   providers before travelling.
                 </p>
               </section>
+
             </div>
 
-            <button
-              className="midnight-planner-result-bottom-button"
-              onClick={resetPlanner}
-            >
-              <RefreshCw size={18} />
-              Plan Another Adventure
-            </button>
+            {/* SAVE TRIP */}
+
+            <div className="midnight-planner-save-section">
+
+              <button
+                className="midnight-planner-save-button"
+                onClick={handleSaveTrip}
+                disabled={savingTrip || tripSaved}
+              >
+                {savingTrip ? (
+                  <>
+                    <RefreshCw
+                      size={18}
+                      className="midnight-spin"
+                    />
+                    Saving Your Trip...
+                  </>
+                ) : tripSaved ? (
+                  <>
+                    <CheckCircle2 size={18} />
+                    Trip Saved Successfully
+                  </>
+                ) : (
+                  <>
+                    <CheckCircle2 size={18} />
+                    Save My Trip
+                  </>
+                )}
+              </button>
+
+              {saveMessage && (
+                <p
+                  className={
+                    tripSaved
+                      ? "save-success-message"
+                      : "save-error-message"
+                  }
+                >
+                  {saveMessage}
+                </p>
+              )}
+
+              <button
+                className="midnight-planner-result-bottom-button"
+                onClick={resetPlanner}
+              >
+                <RefreshCw size={18} />
+                Plan Another Adventure
+              </button>
+
+            </div>
 
           </section>
         )}

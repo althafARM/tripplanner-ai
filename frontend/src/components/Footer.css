@@ -1,0 +1,285 @@
+/* =====================================
+   TROPICAL SRI LANKA FOOTER
+===================================== */
+
+.tropical-footer {
+  position: relative;
+  overflow: hidden;
+  background: #073b4c;
+  color: #ffffff;
+  padding: 75px 7% 0;
+}
+
+/* Decorative background */
+
+.tropical-footer::before {
+  content: "";
+  position: absolute;
+  width: 350px;
+  height: 350px;
+  top: -220px;
+  right: -100px;
+  border-radius: 50%;
+  background: rgba(255, 159, 67, 0.12);
+}
+
+.tropical-footer::after {
+  content: "";
+  position: absolute;
+  width: 300px;
+  height: 300px;
+  bottom: 20px;
+  left: -200px;
+  border-radius: 50%;
+  background: rgba(46, 196, 182, 0.10);
+}
+
+/* Main container */
+
+.tropical-footer-container {
+  position: relative;
+  z-index: 1;
+  max-width: 1400px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1.5fr 0.8fr 0.9fr 1.4fr;
+  gap: 55px;
+  padding-bottom: 65px;
+}
+
+/* Brand */
+
+.tropical-footer-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 13px;
+  text-decoration: none;
+  color: #ffffff;
+}
+
+.tropical-footer-icon {
+  width: 52px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ff9f43;
+  color: #073b4c;
+  border-radius: 16px;
+}
+
+.tropical-footer-brand-text {
+  font-size: 23px;
+  font-weight: 800;
+  letter-spacing: -0.7px;
+}
+
+.tropical-footer-brand-text b {
+  color: #ffad60;
+}
+
+.tropical-footer-brand-text small {
+  display: block;
+  margin-top: 5px;
+  color: #a9c6ce;
+  font-size: 9px;
+  letter-spacing: 2px;
+  font-weight: 700;
+}
+
+.tropical-footer-brand-section > p {
+  max-width: 340px;
+  margin: 24px 0;
+  color: #c2d5da;
+  font-size: 14px;
+  line-height: 1.9;
+}
+
+.tropical-footer-location {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: #ffbd7b;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.tropical-footer-decoration {
+  display: flex;
+  gap: 12px;
+  margin-top: 28px;
+  color: #63d5c7;
+}
+
+/* Navigation */
+
+.tropical-footer-navigation {
+  display: flex;
+  flex-direction: column;
+  gap: 17px;
+}
+
+.tropical-footer-navigation h3 {
+  margin: 5px 0 13px;
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.tropical-footer-navigation a {
+  width: fit-content;
+  color: #c2d5da;
+  text-decoration: none;
+  font-size: 14px;
+  transition: 0.25s ease;
+}
+
+.tropical-footer-navigation a:hover {
+  color: #ffad60;
+  transform: translateX(5px);
+}
+
+/* Call to action */
+
+.tropical-footer-cta {
+  padding: 28px;
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.tropical-footer-cta-label {
+  color: #ffbd7b;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 2px;
+}
+
+.tropical-footer-cta h3 {
+  margin: 17px 0 12px;
+  color: #ffffff;
+  font-size: 25px;
+  line-height: 1.35;
+}
+
+.tropical-footer-cta h3 span {
+  color: #ffad60;
+}
+
+.tropical-footer-cta p {
+  margin-bottom: 23px;
+  color: #c2d5da;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.tropical-footer-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 13px 19px;
+  border-radius: 10px;
+  background: #ff9f43;
+  color: #073b4c;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 800;
+  transition: 0.25s ease;
+}
+
+.tropical-footer-button:hover {
+  background: #ffb86f;
+  transform: translateY(-3px);
+}
+
+/* Bottom section */
+
+.tropical-footer-bottom {
+  position: relative;
+  z-index: 1;
+  max-width: 1400px;
+  margin: 0 auto;
+  min-height: 75px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.13);
+}
+
+.tropical-footer-bottom p {
+  margin: 0;
+  color: #a9c6ce;
+  font-size: 12px;
+}
+
+.tropical-footer-bottom span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #c2d5da;
+  font-size: 12px;
+}
+
+.tropical-footer-bottom span svg {
+  color: #ff9f43;
+}
+
+/* =====================================
+   RESPONSIVE DESIGN
+===================================== */
+
+@media (max-width: 1100px) {
+  .tropical-footer-container {
+    grid-template-columns: 1.3fr 1fr 1fr;
+    gap: 40px;
+  }
+
+  .tropical-footer-cta {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 700px) {
+  .tropical-footer {
+    padding: 55px 6% 0;
+  }
+
+  .tropical-footer-container {
+    grid-template-columns: 1fr 1fr;
+    gap: 38px 25px;
+    padding-bottom: 45px;
+  }
+
+  .tropical-footer-brand-section {
+    grid-column: 1 / -1;
+  }
+
+  .tropical-footer-cta {
+    grid-column: 1 / -1;
+  }
+
+  .tropical-footer-bottom {
+    min-height: 90px;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    gap: 10px;
+  }
+}
+
+@media (max-width: 420px) {
+  .tropical-footer-container {
+    grid-template-columns: 1fr;
+  }
+
+  .tropical-footer-brand-section,
+  .tropical-footer-cta {
+    grid-column: auto;
+  }
+
+  .tropical-footer-cta {
+    padding: 23px;
+  }
+}

@@ -15,10 +15,9 @@ import Explore from "./pages/Explore";
 import TripPlanner from "./pages/TripPlanner";
 import MyTrips from "./pages/MyTrips";
 import ChatAssistant from "./pages/ChatAssistant";
-
 import UserLogin from "./pages/UserLogin";
 import UserRegister from "./pages/UserRegister";
-
+import CostEstimateDetails from "./pages/CostEstimateDetails";
 // Navbar appears only on protected client pages
 function ClientLayout() {
   return (
@@ -49,6 +48,7 @@ export default function App() {
             <Route path="/planner" element={<TripPlanner />} />
             <Route path="/my-trips" element={<MyTrips />} />
             <Route path="/chat" element={<ChatAssistant />} />
+            <Route path="/saved-estimates/:estimateId" element={<CostEstimateDetails />} />
             <Route path="/profile" element={<UserProfile />} />
           </Route>
         </Route>

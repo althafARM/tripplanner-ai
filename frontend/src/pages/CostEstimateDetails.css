@@ -1,0 +1,473 @@
+/* ==========================================
+   TRIPPLANNER AI
+   COST ESTIMATE DETAILS
+   Tropical Sri Lanka Theme
+========================================== */
+
+.estimate-details-page {
+  min-height: 100vh;
+  padding: 35px 5%;
+  box-sizing: border-box;
+  background: #f4f9f9;
+  color: #173b46;
+  font-family: Inter, Arial, sans-serif;
+}
+
+/* BACK BUTTON */
+
+.estimate-back-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 11px 18px;
+  margin-bottom: 25px;
+  border: 1px solid #d7e8e9;
+  border-radius: 10px;
+  background: #ffffff;
+  color: #087e8b;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.25s ease;
+}
+
+.estimate-back-button:hover {
+  background: #087e8b;
+  color: white;
+  border-color: #087e8b;
+  transform: translateX(-3px);
+}
+
+.estimate-back-button.bottom {
+  margin-top: 30px;
+}
+
+/* PAGE HEADER */
+
+.estimate-details-header {
+  position: relative;
+  overflow: hidden;
+  padding: 38px;
+  margin-bottom: 24px;
+  border-radius: 22px;
+  background: linear-gradient(
+    120deg,
+    #07505e,
+    #087e8b,
+    #13a2a4
+  );
+  color: #ffffff;
+  box-shadow: 0 12px 30px rgba(7, 80, 94, 0.15);
+}
+
+.estimate-details-header::after {
+  content: "";
+  position: absolute;
+  width: 230px;
+  height: 230px;
+  top: -115px;
+  right: -55px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.estimate-details-header > span {
+  display: inline-block;
+  margin-bottom: 15px;
+  color: #ffca86;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 2px;
+}
+
+.estimate-details-header h1 {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 0 0 15px;
+  color: white;
+  font-size: clamp(23px, 4vw, 34px);
+  font-weight: 800;
+}
+
+.estimate-details-header h1 svg {
+  color: #ffbd73;
+  flex-shrink: 0;
+}
+
+.estimate-details-header p {
+  margin: 0;
+  color: #c8e9e8;
+  font-size: 13px;
+}
+
+/* TOTAL COST */
+
+.estimate-details-total {
+  padding: 35px;
+  margin-bottom: 22px;
+  border: 1px solid #f3dfbd;
+  border-radius: 20px;
+  background: linear-gradient(
+    135deg,
+    #fffaf1,
+    #ffffff
+  );
+  box-shadow: 0 7px 22px rgba(160, 115, 44, 0.07);
+}
+
+.estimate-details-total > span {
+  color: #a77b35;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+}
+
+.estimate-details-total h2 {
+  margin: 13px 0;
+  color: #07505e;
+  font-size: clamp(32px, 5vw, 46px);
+  font-weight: 850;
+  letter-spacing: -1px;
+}
+
+.estimate-details-total p {
+  margin: 0;
+  color: #71818a;
+  font-size: 14px;
+}
+
+.estimate-details-total strong {
+  color: #e28b43;
+}
+
+/* BUDGET STATUS */
+
+.estimate-details-budget {
+  display: flex;
+  align-items: center;
+  gap: 17px;
+  padding: 23px 26px;
+  margin-bottom: 35px;
+  border-radius: 16px;
+}
+
+.estimate-details-budget.within-budget {
+  background: #eaf8ef;
+  border: 1px solid #c5ebd2;
+  color: #18834b;
+}
+
+.estimate-details-budget.over-budget {
+  background: #fff0ed;
+  border: 1px solid #f4d0c9;
+  color: #d04b3e;
+}
+
+.estimate-details-budget > svg {
+  flex-shrink: 0;
+}
+
+.estimate-details-budget h3 {
+  margin: 0 0 6px;
+  font-size: 17px;
+  font-weight: 800;
+}
+
+.estimate-details-budget p {
+  margin: 0;
+  font-size: 13px;
+}
+
+/* SECTIONS */
+
+.estimate-details-section {
+  margin-bottom: 35px;
+}
+
+.estimate-details-section > h2 {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  margin: 0 0 20px;
+  color: #07505e;
+  font-size: 21px;
+  font-weight: 800;
+}
+
+.estimate-details-section > h2 svg {
+  color: #f28c45;
+}
+
+/* TRIP INFORMATION GRID */
+
+.estimate-details-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 17px;
+}
+
+.estimate-detail-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 11px;
+  min-width: 0;
+  padding: 23px;
+  border: 1px solid #e2eeee;
+  border-radius: 16px;
+  background: #ffffff;
+  box-shadow: 0 5px 18px rgba(7, 80, 94, 0.045);
+  transition: 0.25s ease;
+}
+
+.estimate-detail-card:hover {
+  transform: translateY(-4px);
+  border-color: #f2bd88;
+  box-shadow: 0 10px 25px rgba(7, 80, 94, 0.09);
+}
+
+.estimate-detail-card > svg {
+  width: 23px;
+  height: 23px;
+  color: #f28c45;
+}
+
+.estimate-detail-card span {
+  color: #819099;
+  font-size: 12px;
+  font-weight: 650;
+}
+
+.estimate-detail-card strong {
+  color: #173b46;
+  font-size: 15px;
+  font-weight: 750;
+  overflow-wrap: anywhere;
+}
+
+/* ROUTE INFORMATION */
+
+.estimate-route-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 17px;
+}
+
+.estimate-route-grid > div {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 25px;
+  border: 1px solid #dcebec;
+  border-radius: 15px;
+  background: linear-gradient(
+    145deg,
+    #ffffff,
+    #effafa
+  );
+  box-shadow: 0 5px 16px rgba(7, 80, 94, 0.04);
+}
+
+.estimate-route-grid span {
+  color: #819099;
+  font-size: 12px;
+  font-weight: 650;
+}
+
+.estimate-route-grid strong {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #087e8b;
+  font-size: 23px;
+  font-weight: 800;
+}
+
+.estimate-route-grid strong svg {
+  color: #f28c45;
+}
+
+.estimate-route-source {
+  margin-top: 15px;
+  color: #87969d;
+  font-size: 12px;
+}
+
+/* EXPENSE BREAKDOWN */
+
+.estimate-expense-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 17px;
+}
+
+.estimate-expense-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  min-width: 0;
+  padding: 22px;
+  border: 1px solid #e2eeee;
+  border-radius: 16px;
+  background: #ffffff;
+  box-shadow: 0 5px 18px rgba(7, 80, 94, 0.045);
+  transition: 0.25s ease;
+}
+
+.estimate-expense-card:hover {
+  transform: translateY(-4px);
+  border-color: #f2bd88;
+  box-shadow: 0 10px 25px rgba(7, 80, 94, 0.09);
+}
+
+.estimate-expense-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 47px;
+  height: 47px;
+  flex-shrink: 0;
+  border-radius: 13px;
+  background: #fff2e8;
+  color: #e98643;
+}
+
+.estimate-expense-card h3 {
+  margin: 2px 0 10px;
+  color: #61747c;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.estimate-expense-card strong {
+  display: block;
+  margin-bottom: 9px;
+  color: #07505e;
+  font-size: 19px;
+  font-weight: 850;
+  overflow-wrap: anywhere;
+}
+
+.estimate-expense-card span {
+  display: inline-block;
+  padding: 5px 10px;
+  border-radius: 20px;
+  background: #eaf8f2;
+  color: #218354;
+  font-size: 10px;
+  font-weight: 750;
+}
+
+/* LOADING AND ERROR */
+
+.estimate-details-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  padding: 30px;
+  border-radius: 20px;
+  background: #ffffff;
+  text-align: center;
+  box-shadow: 0 8px 25px rgba(7, 80, 94, 0.06);
+}
+
+.estimate-details-message > svg {
+  margin-bottom: 15px;
+  color: #f28c45;
+}
+
+.estimate-details-message h2 {
+  color: #07505e;
+  font-size: 22px;
+}
+
+.estimate-details-message p {
+  color: #819099;
+  font-size: 14px;
+}
+
+.estimate-details-message button {
+  margin-top: 15px;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 9px;
+  background: #087e8b;
+  color: white;
+  font-weight: 750;
+  cursor: pointer;
+  transition: 0.25s ease;
+}
+
+.estimate-details-message button:hover {
+  background: #07505e;
+  transform: translateY(-2px);
+}
+
+.cost-spin {
+  animation: costSpin 1.2s linear infinite;
+}
+
+@keyframes costSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* RESPONSIVE DESIGN */
+
+@media (max-width: 1050px) {
+  .estimate-details-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .estimate-expense-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 650px) {
+  .estimate-details-page {
+    padding: 22px 15px;
+  }
+
+  .estimate-details-header {
+    padding: 25px 20px;
+    border-radius: 17px;
+  }
+
+  .estimate-details-total {
+    padding: 25px 20px;
+  }
+
+  .estimate-details-budget {
+    padding: 19px;
+  }
+
+  .estimate-details-section > h2 {
+    font-size: 19px;
+  }
+
+  .estimate-details-grid,
+  .estimate-route-grid,
+  .estimate-expense-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .estimate-detail-card,
+  .estimate-expense-card {
+    padding: 19px;
+  }
+
+  .estimate-route-grid > div {
+    padding: 20px;
+  }
+
+  .estimate-route-grid strong {
+    font-size: 21px;
+  }
+}
